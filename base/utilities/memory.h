@@ -23,6 +23,7 @@
 #define MATCHMAKING_DLL			XorStr("matchmaking.dll")
 #define SERVER_DLL				XorStr("server.dll")
 #define SERVERBROWSER_DLL		XorStr("serverbrowser.dll")
+#define FILESYSTEM_DLL			XorStr("filesystem_stdio.dll")
 #pragma endregion
 
 /*
@@ -138,4 +139,12 @@ namespace MEM
 	 */
 	// checks do we can we read/readwrite given memory region
 	bool IsValidCodePtr(const void* pPointer);
+
+	template <typename T>
+	static constexpr auto RelativeToAbsolute(uintptr_t pAddress) noexcept
+	{
+		return (T)(pAddress + 4 + * reinterpret_cast<std::int32_t*>(pAddress));
+	}
+
+	void Init();
 }

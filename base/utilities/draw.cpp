@@ -60,7 +60,7 @@ void D::AddText(const Vector2D& vecPosition, const HFont hFont, const std::strin
 	}
 }
 
-void D::AddText(const int x, const int y, const HFont hFont, const std::string& szText, const Color& colText) 
+void D::AddText(const int x, const int y, const HFont hFont, const std::string& szText, const Color& colText)
 {
 	wchar_t temp[128];
 	int text_width, text_height;
@@ -80,7 +80,7 @@ void D::AddRect(const Vector2D& vecPosition, const Vector2D& vecSize, const Colo
 	I::Surface->DrawOutlinedRect(vecPosition.x, vecPosition.y, vecPosition.x + vecSize.x, vecPosition.y + vecSize.y);
 }
 
-void D::AddRect(const int x, const int y, const int w, const int h, const Color& colRect) 
+void D::AddRect(const int x, const int y, const int w, const int h, const Color& colRect)
 {
 	I::Surface->DrawSetColor(colRect);
 	I::Surface->DrawOutlinedRect(x, y, x + w, y + h);
@@ -92,7 +92,7 @@ void D::AddFilledRect(const Vector2D& vecPosition, const Vector2D& vecSize, cons
 	I::Surface->DrawFilledRect(vecPosition.x, vecPosition.y, vecPosition.x + vecSize.x, vecPosition.y + vecSize.y);
 }
 
-void D::AddFilledRect(const int x, const int y, const int w, const int h, const Color& colRect) 
+void D::AddFilledRect(const int x, const int y, const int w, const int h, const Color& colRect)
 {
 	I::Surface->DrawSetColor(colRect);
 	I::Surface->DrawFilledRect(x, y, x + w, y + h);
@@ -102,7 +102,7 @@ void D::AddTexturedPolygon(const std::int32_t iVerticesCount, Vertex_t* verVerti
 {
 	static unsigned char ucBuffer[4] = { 255,255,255,255 };
 	unsigned int iTextureId{};
-	if (!iTextureId) 
+	if (!iTextureId)
 	{
 		iTextureId = I::Surface->CreateNewTextureID(true);
 		I::Surface->DrawSetTextureRGBA(iTextureId, ucBuffer, 1, 1);
@@ -149,6 +149,27 @@ void D::AddHorizontalGradientRect(const int x, const int y, const int w, const i
 	I::Surface->DrawFilledRectFade(x, y, x + w, y + h, 0, 255, true);
 }
 
+void D::AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, const Color& colRect, const int iRadius)
+{
+	Vertex_t round[64];
+
+	for (int i = 0; i < 4; i++)
+	{
+		int _x = iX + ((i < 2) ? (iWidth - iRadius) : iRadius);
+		int _y = iY + ((i % 3) ? (iHeight - iRadius) : iRadius);
+
+		float a = 90.f * i;
+
+		for (int j = 0; j < 16; j++)
+		{
+			float _a = M_DEG2RAD(a + j * 6.f);
+
+			round[(i * 16) + j] = Vertex_t(Vector2D(_x + iRadius * sin(_a), _y - iRadius * cos(_a)));
+		}
+	}
+
+	D::AddTexturedPolygon(64, round, colRect);
+}
 #pragma endregion
 
 #pragma region draw_extra
@@ -262,14 +283,14 @@ void D::R::AddGradientRect(const int iX, const int iY, const int iWidth, const i
 	I::Surface->DrawFilledRectFade(iX, iY, iX + iWidth, iY + iHeight, 0, 255, bHorizontal);
 }
 
-void D::R::AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, const int iRadius, FGUI::COLOR colRect)
+void D::R::AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, FGUI::COLOR colRect, const int iRadius)
 {
 	Vertex_t round[64];
 
 	for (int i = 0; i < 4; i++)
 	{
 		int _x = iX + ((i < 2) ? (iWidth - iRadius) : iRadius);
-		int _y = iY + ((i % 3) ? (iWidth - iRadius) : iRadius);
+		int _y = iY + ((i % 3) ? (iHeight - iRadius) : iRadius);
 
 		float a = 90.f * i;
 

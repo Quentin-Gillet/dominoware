@@ -43,6 +43,7 @@
 #include "../sdk/interfaces/ivrenderview.h"
 #include "../sdk/interfaces/iweaponsystem.h"
 #include "../sdk/interfaces/ikeyvaluessystem.h"
+#include "../sdk/interfaces/ifilesystem.h"
 
 class CInterfaceRegister
 {
@@ -111,4 +112,5 @@ namespace I
 	inline IClientState*			ClientState;
 	inline IWeaponSystem*			WeaponSystem;
 	inline IGlowObjectManager*		GlowManager;
+	inline IFileSystem*				FileSystem;
 }

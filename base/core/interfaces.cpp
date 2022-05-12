@@ -35,6 +35,7 @@ bool I::Setup()
 	MatchFramework =	Capture<IMatchFramework>(MATCHMAKING_DLL, XorStr("MATCHFRAMEWORK_"));
 	GameTypes =			Capture<IGameTypes>(MATCHMAKING_DLL, XorStr("VENGINE_GAMETYPES_VERSION"));
 	Server =			Capture<IServerGameDLL>(SERVER_DLL, XorStr("ServerGameDLL"));
+	FileSystem =		Capture<IFileSystem>(FILESYSTEM_DLL, XorStr("VBaseFileSystem011"));
 
 	SteamClient = Engine->GetSteamAPIContext()->pSteamClient;
 	if (SteamClient == nullptr)

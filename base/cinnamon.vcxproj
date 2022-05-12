@@ -112,12 +112,15 @@
     <ClInclude Include="sdk\datatypes\color.h" />
     <ClInclude Include="sdk\datatypes\datamap.h" />
     <ClInclude Include="sdk\datatypes\datatable.h" />
+    <ClInclude Include="sdk\datatypes\itemschema.h" />
     <ClInclude Include="sdk\datatypes\keyvalues.h" />
     <ClInclude Include="sdk\datatypes\matrix.h" />
     <ClInclude Include="sdk\datatypes\qangle.h" />
+    <ClInclude Include="sdk\datatypes\utlmap.h" />
     <ClInclude Include="sdk\datatypes\usercmd.h" />
     <ClInclude Include="sdk\datatypes\utlmemory.h" />
     <ClInclude Include="sdk\datatypes\utlstack.h" />
+    <ClInclude Include="sdk\datatypes\utlstring.h" />
     <ClInclude Include="sdk\datatypes\utlvector.h" />
     <ClInclude Include="sdk\datatypes\vector.h" />
     <ClInclude Include="sdk\hash\crc32.h" />
@@ -132,6 +135,7 @@
     <ClInclude Include="sdk\interfaces\ienginesound.h" />
     <ClInclude Include="sdk\interfaces\ienginetrace.h" />
     <ClInclude Include="sdk\interfaces\ienginevgui.h" />
+    <ClInclude Include="sdk\interfaces\ifilesystem.h" />
     <ClInclude Include="sdk\interfaces\igameconsole.h" />
     <ClInclude Include="sdk\interfaces\igameeventmanager.h" />
     <ClInclude Include="sdk\interfaces\igametypes.h" />

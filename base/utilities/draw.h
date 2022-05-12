@@ -24,7 +24,7 @@ namespace F
 	 * [N][purpose]	[max size]	[flags]
 	 */
 
-	// 0	main		13		autohinting
+	 // 0	main		13		autohinting
 	inline FGUI::FONT Whitney;
 	inline FGUI::WIDGET_FONT WhitneyMenu;
 	// 1	extra		14		bold
@@ -60,6 +60,7 @@ namespace D
 	void AddVerticalGradientRect(const Vector2D& vecPosition, const Vector2D& vecSize, const Color& colRectTop, const Color& colRectBottom);
 	void AddHorizontalGradientRect(const Vector2D& vecPosition, const Vector2D& vecSize, const Color& colRectLeft, const Color& colRectRight);
 	void AddHorizontalGradientRect(const int x, const int y, const int w, const int h, const Color& colRectLeft, const Color& colRectRight);
+	void AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, const Color& colRect, const int iRadius);
 
 	namespace R
 	{
@@ -67,9 +68,9 @@ namespace D
 		void AddText(const int iX, const int iY, FGUI::FONT hFont, FGUI::COLOR colText, std::string szText);
 		void AddOutlinedRect(const int iX, const int iY, const int iWidth, const int iHeight, FGUI::COLOR colRect);
 		void AddRect(const int iX, const int iY, const int iWidth, const int iHeight, FGUI::COLOR colRect);
-		void AddTexturedPolygon(const std::int32_t iVerticesCount, Vertex_t* verVertices, FGUI::COLOR colPoly); //TO IMPLEMENTS
+		void AddTexturedPolygon(const std::int32_t iVerticesCount, Vertex_t* verVertices, FGUI::COLOR colPoly);
 		void AddGradientRect(const int iX, const int iY, const int iWidth, const int iHeight, FGUI::COLOR colRectLeft, FGUI::COLOR colRectRight, bool bHorizontal);
-		void AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, const int iRadius, FGUI::COLOR colRect);
+		void AddRoundedRect(const int iX, const int iY, const int iWidth, const int iHeight, FGUI::COLOR colRect, const int iRadius);
 	}
 
 	// Extra
@@ -77,6 +78,7 @@ namespace D
 	bool WorldToScreen(const Vector& vecOrigin, Vector2D& vecScreen);
 	/* get Text size */
 	Vector2D GetTextSize(const HFont hFont, const std::string& szText);
+
 	FGUI::DIMENSION GetTextSize(FGUI::FONT hFont, std::string szText);
 	// get Screen size
 	FGUI::DIMENSION GetScreenSize();

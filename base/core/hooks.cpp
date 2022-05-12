@@ -41,8 +41,8 @@ bool H::Setup()
 {
 	SEH_START
 
-	if (MH_Initialize() != MH_OK)
-		throw std::runtime_error(XorStr("failed initialize minhook"));
+		if (MH_Initialize() != MH_OK)
+			throw std::runtime_error(XorStr("failed initialize minhook"));
 
 	if (!DTR::Reset.Create(MEM::GetVFunc(I::DirectDevice, VTABLE::RESET), &hkReset))
 		return false;
@@ -63,10 +63,10 @@ bool H::Setup()
 		return false;
 
 	// @note: be useful for mouse event aimbot
-	#if 0
+#if 0
 	if (!DTR::OverrideMouseInput.Replace(MEM::GetVFunc(I::ClientMode, VTABLE::OVERRIDEMOUSEINPUT), &hkOverrideMouseInput))
 		return false;
-	#endif
+#endif
 
 	if (!DTR::GetViewModelFOV.Create(MEM::GetVFunc(I::ClientMode, VTABLE::GETVIEWMODELFOV), &hkGetViewModelFOV))
 		return false;
@@ -112,8 +112,8 @@ bool H::Setup()
 	return true;
 
 	SEH_END
-	
-	return false;
+
+		return false;
 }
 
 void H::Restore()
@@ -142,18 +142,18 @@ long D3DAPI H::hkEndScene(IDirect3DDevice9* pDevice)
 
 	SEH_START
 
-	if (pUsedAddress == nullptr)
-	{
-		// search for gameoverlay address
-		MEMORY_BASIC_INFORMATION memInfo;
-		VirtualQuery(_ReturnAddress(), &memInfo, sizeof(MEMORY_BASIC_INFORMATION));
+		if (pUsedAddress == nullptr)
+		{
+			// search for gameoverlay address
+			MEMORY_BASIC_INFORMATION memInfo;
+			VirtualQuery(_ReturnAddress(), &memInfo, sizeof(MEMORY_BASIC_INFORMATION));
 
-		char chModuleName[MAX_PATH];
-		GetModuleFileName(static_cast<HMODULE>(memInfo.AllocationBase), chModuleName, MAX_PATH);
+			char chModuleName[MAX_PATH];
+			GetModuleFileName(static_cast<HMODULE>(memInfo.AllocationBase), chModuleName, MAX_PATH);
 
-		if (strstr(chModuleName, GAMEOVERLAYRENDERER_DLL) != nullptr)
-			pUsedAddress = _ReturnAddress();
-	}
+			if (strstr(chModuleName, GAMEOVERLAYRENDERER_DLL) != nullptr)
+				pUsedAddress = _ReturnAddress();
+		}
 
 	// check for called from gameoverlay and render here to bypass capturing programs
 	if (_ReturnAddress() == pUsedAddress)
@@ -162,7 +162,7 @@ long D3DAPI H::hkEndScene(IDirect3DDevice9* pDevice)
 
 	SEH_END
 
-	return oEndScene(pDevice);
+		return oEndScene(pDevice);
 }
 
 void* FASTCALL H::hkAllocKeyValuesMemory(IKeyValuesSystem* thisptr, int edx, int iSize)
@@ -215,8 +215,8 @@ static void STDCALL CreateMove(int nSequenceNumber, float flInputSampleFrametime
 
 	SEH_START
 
-	// @note: need do bunnyhop and other movements before prediction
-	CMiscellaneous::Get().Run(pCmd, pLocal, bSendPacket);
+		// @note: need do bunnyhop and other movements before prediction
+		CMiscellaneous::Get().Run(pCmd, pLocal, bSendPacket);
 
 	/*
 	 * CL_RunPrediction
@@ -266,7 +266,7 @@ static void STDCALL CreateMove(int nSequenceNumber, float flInputSampleFrametime
 	else
 		CLagCompensation::Get().ClearIncomingSequences();*/
 
-	// @note: we doesnt need rehook manually cuz detours here
+		// @note: we doesnt need rehook manually cuz detours here
 	if (pNetChannel != nullptr)
 	{
 		if (!DTR::SendNetMsg.IsHooked())
@@ -286,7 +286,7 @@ static void STDCALL CreateMove(int nSequenceNumber, float flInputSampleFrametime
 
 	SEH_END
 
-	pVerifiedCmd->userCmd = *pCmd;
+		pVerifiedCmd->userCmd = *pCmd;
 	pVerifiedCmd->uHashCRC = pCmd->GetChecksum();
 }
 
@@ -302,9 +302,9 @@ __declspec(naked) void FASTCALL H::hkCreateMoveProxy([[maybe_unused]] IBaseClien
 		push	dword ptr[flInputSampleFrametime]; // ebp + 12
 		push	dword ptr[nSequenceNumber]; // ebp + 8
 		call	CreateMove
-		pop		ebx
-		pop		ebp
-		retn	0Ch
+			pop		ebx
+			pop		ebp
+			retn	0Ch
 	}
 }
 
@@ -332,9 +332,9 @@ void FASTCALL H::hkPaintTraverse(ISurface* thisptr, int edx, unsigned int uPanel
 		I::Panel->SetMouseInputEnabled(uPanel, W::Widgets::cMainMenu->GetState());
 
 		SEH_START
-		
-		// store data to render
-		CVisuals::Get().Store();
+
+			// store data to render
+			CVisuals::Get().Store();
 
 		SEH_END
 	}
@@ -365,12 +365,12 @@ void FASTCALL H::hkFrameStageNotify(IBaseClientDll* thisptr, int edx, EClientFra
 
 	SEH_START
 
-	if (!I::Engine->IsInGame())
-	{
-		// clear sequences or we get commands overflow on new map connection
-		CLagCompensation::Get().ClearIncomingSequences();
-		return oFrameStageNotify(thisptr, edx, stage);
-	}
+		if (!I::Engine->IsInGame())
+		{
+			// clear sequences or we get commands overflow on new map connection
+			CLagCompensation::Get().ClearIncomingSequences();
+			return oFrameStageNotify(thisptr, edx, stage);
+		}
 
 	if (I::Engine->IsTakingScreenshot())
 		return oFrameStageNotify(thisptr, edx, stage);
@@ -465,12 +465,12 @@ void FASTCALL H::hkFrameStageNotify(IBaseClientDll* thisptr, int edx, EClientFra
 		 * here we can restore our modified things
 		 */
 
-		// restore original visual punch values
-		/*if (pLocal->IsAlive() && C::Get<bool>(Vars.bWorld) && C::Get<std::vector<bool>>(Vars.vecWorldRemovals).at(REMOVAL_PUNCH))
-		{
-			pLocal->GetViewPunch() = angOldViewPunch;
-			pLocal->GetPunch() = angOldAimPunch;
-		}*/
+		 // restore original visual punch values
+		 /*if (pLocal->IsAlive() && C::Get<bool>(Vars.bWorld) && C::Get<std::vector<bool>>(Vars.vecWorldRemovals).at(REMOVAL_PUNCH))
+		 {
+			 pLocal->GetViewPunch() = angOldViewPunch;
+			 pLocal->GetPunch() = angOldAimPunch;
+		 }*/
 
 		break;
 	}
@@ -480,7 +480,7 @@ void FASTCALL H::hkFrameStageNotify(IBaseClientDll* thisptr, int edx, EClientFra
 
 	SEH_END
 
-	oFrameStageNotify(thisptr, edx, stage);
+		oFrameStageNotify(thisptr, edx, stage);
 }
 
 void FASTCALL H::hkDrawModel(IStudioRender* thisptr, int edx, DrawModelResults_t* pResults, const DrawModelInfo_t& info, matrix3x4_t* pBoneToWorld, float* flFlexWeights, float* flFlexDelayedWeights, const Vector& vecModelOrigin, int nFlags)
@@ -496,7 +496,7 @@ void FASTCALL H::hkDrawModel(IStudioRender* thisptr, int edx, DrawModelResults_t
 		bClearOverride = CVisuals::Get().Chams(G::pLocal, pResults, info, pBoneToWorld, flFlexWeights, flFlexDelayedWeights, vecModelOrigin, nFlags);*/
 
 	oDrawModel(thisptr, edx, pResults, info, pBoneToWorld, flFlexWeights, flFlexDelayedWeights, vecModelOrigin, nFlags);
-	
+
 	if (bClearOverride)
 		I::StudioRender->ForcedMaterialOverride(nullptr);
 }
@@ -620,7 +620,7 @@ int FASTCALL H::hkSendDatagram(INetChannel* thisptr, int edx, bf_write* pDatagra
 void FASTCALL H::hkOverrideView(IClientModeShared* thisptr, int edx, CViewSetup* pSetup)
 {
 	static auto oOverrideView = DTR::OverrideView.GetOriginal<decltype(&hkOverrideView)>();
-	
+
 	if (!I::Engine->IsInGame() || I::Engine->IsTakingScreenshot())
 		return oOverrideView(thisptr, edx, pSetup);
 
@@ -648,10 +648,10 @@ void FASTCALL H::hkOverrideView(IClientModeShared* thisptr, int edx, CViewSetup*
 void FASTCALL H::hkOverrideMouseInput(IClientModeShared* thisptr, int edx, float* x, float* y)
 {
 	static auto oOverrideMouseInput = DTR::OverrideMouseInput.GetOriginal<decltype(&hkOverrideMouseInput)>();
-	
+
 	if (!I::Engine->IsInGame())
 		return oOverrideMouseInput(thisptr, edx, x, y);
-	
+
 	oOverrideMouseInput(thisptr, edx, x, y);
 }
 
@@ -705,11 +705,11 @@ int FASTCALL H::hkSendMessage(ISteamGameCoordinator* thisptr, int edx, std::uint
 	if (iStatus != EGCResultOK)
 		return iStatus;
 
-	#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 	L::PushConsoleColor(FOREGROUND_INTENSE_GREEN | FOREGROUND_RED);
 	L::Print(XorStr("[<-] Message sent to GC {:d}!"), uMessageType);
 	L::PopConsoleColor();
-	#endif
+#endif
 
 	return iStatus;
 }
@@ -724,11 +724,11 @@ int FASTCALL H::hkRetrieveMessage(ISteamGameCoordinator* thisptr, int edx, std::
 
 	const std::uint32_t uMessageType = *puMsgType & 0x7FFFFFFF;
 
-	#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 	L::PushConsoleColor(FOREGROUND_INTENSE_GREEN | FOREGROUND_RED);
 	L::Print(XorStr("[->] Message received from GC {:d}!"), uMessageType);
 	L::PopConsoleColor();
-	#endif
+#endif
 
 	// check for k_EMsgGCCStrike15_v2_GCToClientSteamdatagramTicket message when we can accept the game
 	/*if (C::Get<bool>(Vars.bMiscAutoAccept) && uMessageType == 9177)
@@ -766,13 +766,13 @@ bool FASTCALL H::hkSvCheatsGetBool(CConVar* thisptr, int edx)
 bool P::Setup()
 {
 	// @note: as example
-	#if 0
+#if 0
 	RecvProp_t* pSmokeEffectTickBegin = CNetvarManager::Get().mapProps[FNV1A::HashConst("CSmokeGrenadeProjectile->m_nSmokeEffectTickBegin")].pRecvProp;
 	if (pSmokeEffectTickBegin == nullptr)
 		return false;
 
 	RVP::SmokeEffectTickBegin = std::make_shared<CRecvPropHook>(pSmokeEffectTickBegin, P::SmokeEffectTickBegin);
-	#endif
+#endif
 
 	return true;
 }
@@ -780,10 +780,10 @@ bool P::Setup()
 void P::Restore()
 {
 	// @note: as example
-	#if 0
-	// restore smoke effect
+#if 0
+// restore smoke effect
 	RVP::SmokeEffectTickBegin->Restore();
-	#endif
+#endif
 }
 #pragma endregion
 

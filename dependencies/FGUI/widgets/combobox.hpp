@@ -72,6 +72,12 @@ namespace FGUI
 		// @brief: handle widget tooltips
 		void Tooltip() override;
 
+		void ClearEntries()
+		{
+			m_prgpEntries.first.clear();
+			m_prgpEntries.second.clear();
+			AddEntry("--------------");
+		}
 	private:
 		bool m_bIsOpened;
 		int m_iEntrySpacing;

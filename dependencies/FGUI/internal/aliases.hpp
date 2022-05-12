@@ -31,7 +31,7 @@ namespace FGUI
 		using pDrawRectangle = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR)>;
 		using pDrawOutline = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR)>;
 		using pDrawGradient = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR, FGUI::COLOR, bool)>;
-		using pDrawRounded = std::add_pointer_t<void(int, int, int, int, int, FGUI::COLOR)>;
+		using pDrawRounded = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR, int)>;
 		using pDrawLine = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR)>;
 		using pDrawText = std::add_pointer_t<void(int, int, FGUI::FONT, FGUI::COLOR, std::string)>;
 

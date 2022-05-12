@@ -8,6 +8,12 @@
 #include "../sdk/entity.h"
 // used: listener event function
 #include "../sdk/interfaces/igameeventmanager.h"
+// used: ItemSystem, ItemSchema
+#include "../sdk/datatypes/itemschema.h"
+// used: loggin
+#include "../utilities/logging.h"
+//used: localize
+#include "../core/interfaces.h"
 
 struct SkinObject_t
 {
@@ -93,6 +99,42 @@ const std::pair<std::size_t, std::string> arrItemQuality[] =
 	{ 12, "Tournament" }
 };
 
+struct KitWeapon {
+	KitWeapon(int paintKit, EItemDefinitionIndex weaponId, const char* iconPath) noexcept : iPaintKit{ paintKit }, weaponId{ weaponId }, iconPath{ iconPath } {}
+	int iPaintKit;
+	EItemDefinitionIndex weaponId;
+	const char* iconPath;
+};
+
+struct CPaintKit {
+	CPaintKit(int id, std::string name, float wearRemapMin, float wearRemapMax) noexcept
+		: id{ id }, wearRemapMin{ wearRemapMin }, wearRemapMax{ wearRemapMax }, name{ name } {}
+
+	int id;
+	float wearRemapMin = 0.0f;
+	float wearRemapMax = 1.0f;
+	std::string name;
+};
+
+struct PaintKitItem
+{
+	PaintKitItem(EItemDefinitionIndex weaponID, std::size_t dataIndex, std::string_view iconPath) noexcept
+		: weaponID{ weaponID }, dataIndex{ dataIndex }, iconPath{ iconPath } {}
+	EItemDefinitionIndex weaponID;
+	std::size_t dataIndex;
+	std::string_view iconPath;
+};
+
+struct KitItem
+{
+	KitItem(std::string_view iconPath, EItemDefinitionIndex weaponID, int id, std::string name) noexcept
+		: iconPath{ iconPath }, weaponID{ weaponID }, id{ id }, name{ name }{}
+	std::string_view iconPath;
+	EItemDefinitionIndex weaponID;
+	int id;
+	std::string name;
+};
+
 // @todo: add valve vdf/vpk parser and get skins, rarity things, etc with it
 class CSkinChanger : public CSingleton<CSkinChanger>
 {
@@ -102,7 +144,15 @@ public:
 	/* knife kill icons replace */
 	void Event(IGameEvent* pEvent, const FNV1A_t uNameHash);
 	/* dump stikers and paintkits */
-	void Dump();
+	void Dump(ItemSchema* pItemSchema, ToUtf8Converter<>& pConverter);
+	// init itemSystem
+	void Init();
+	// get skins corresponding to a weapon
+	std::vector<KitItem> GetSkinsForAWeapon(EItemDefinitionIndex weaponId);
+
+	std::vector<CPaintKit> pPaintKits;
+	std::vector<PaintKitItem> pGlovePaintKits;
+	std::vector<PaintKitItem> pWeaponPaintKits;
 private:
-	/* ur values and main functionality */
+	std::vector<KitWeapon> GetKitsWeapons(const UtlMap<std::uint64_t, AlternateIconData>& alternateIcons) noexcept;
 };

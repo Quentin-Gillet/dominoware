@@ -6,6 +6,8 @@
 #include "tabpanel.hpp"
 #include "container.hpp"
 
+#include "../../../base/utilities/logging.h"
+
 namespace FGUI
 {
 
@@ -47,6 +49,11 @@ namespace FGUI
 		return m_nStyle;
 	}
 
+	int CTabPanel::GetTabsCount()
+	{
+		return m_prgpTabButtons.size();
+	}
+
 	void CTabPanel::Geometry(FGUI::WIDGET_STATUS status)
 	{
 		// don't proceed if the tab container is empty
@@ -58,7 +65,8 @@ namespace FGUI
 		FGUI::AREA arWidgetRegion = { 0, 0, 0, 0 };
 		FGUI::COLOR accentColor = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer())->GetAccentColor();
 
-		FGUI::RENDER.Gradient(GetAbsolutePosition().m_iX + 20, GetAbsolutePosition().m_iY + 5, m_dmSize.m_iWidth - 20, 3, accentColor, { 45, 45, 45 }, true);
+		/*FGUI::RENDER.Gradient(GetAbsolutePosition().m_iX + 20, GetAbsolutePosition().m_iY + 50, (m_dmSize.m_iWidth * m_prgpTabButtons.size() / 2) - 20, 3, { 45, 45, 45 }, accentColor, true);
+		FGUI::RENDER.Gradient(GetAbsolutePosition().m_iX - 20 + (m_dmSize.m_iWidth * m_prgpTabButtons.size() / 2), GetAbsolutePosition().m_iY + 50, (m_dmSize.m_iWidth * m_prgpTabButtons.size() / 2) - 20, 3, accentColor, { 45, 45, 45 }, true);*/
 
 		for (std::size_t i = 0; i < m_prgpTabButtons.size(); i++)
 		{
@@ -79,7 +87,7 @@ namespace FGUI
 				{
 					//FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
 					FGUI::RENDER.Text((arWidgetRegion.m_iLeft + dimTextSize.m_iWidth / 2 + 13), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
-					if(FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+					if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
 						FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - 5), arWidgetRegion.m_iRight, 2, { accentColor.m_ucRed, accentColor.m_ucGreen, accentColor.m_ucBlue, 80.f });
 				}
 			}
@@ -106,6 +114,10 @@ namespace FGUI
 	}
 
 	void CTabPanel::Update()
+	{
+	}
+
+	void CTabPanel::Input()
 	{
 		FGUI::AREA arWidgetRegion = { 0, 0, 0, 0 };
 
@@ -138,10 +150,6 @@ namespace FGUI
 				}
 			}
 		}
-	}
-
-	void CTabPanel::Input()
-	{
 	}
 
 	void CTabPanel::Save(nlohmann::json& module)

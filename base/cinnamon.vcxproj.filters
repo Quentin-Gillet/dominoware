@@ -593,5 +593,17 @@
     <ClInclude Include="utilities\draw.h">
       <Filter>include\utilities</Filter>
     </ClInclude>
+    <ClInclude Include="sdk\interfaces\ifilesystem.h">
+      <Filter>include\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\datatypes\itemschema.h">
+      <Filter>include\sdk\datatypes</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\datatypes\utlmap.h">
+      <Filter>include\sdk\datatypes</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\datatypes\utlstring.h">
+      <Filter>include\sdk\datatypes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,8 @@
 
 // library includes
 #include "container.hpp"
-#include "checkbox.hpp"
+
+#include "../../../base/utilities/logging.h"
 
 namespace FGUI
 {
@@ -139,29 +140,31 @@ namespace FGUI
 
 	void CContainer::SetFocusedWidget(std::shared_ptr<FGUI::CWidgets> widget)
 	{
+		std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 		if (widget)
 		{
-			m_pFocusedWidget = widget;
+			cWindow->m_pFocusedWidget = widget;
 
-			if (m_pFocusedWidget)
+			if (cWindow->m_pFocusedWidget)
 			{
-				m_bIsFocusingOnWidget = true;
+				cWindow->m_bIsFocusingOnWidget = true;
 			}
 		}
 		else
 		{
-			m_pFocusedWidget.reset();
+			cWindow->m_pFocusedWidget.reset();
 
-			if (!m_pFocusedWidget)
+			if (!cWindow->m_pFocusedWidget)
 			{
-				m_bIsFocusingOnWidget = false;
+				cWindow->m_bIsFocusingOnWidget = false;
 			}
 		}
 	}
 
 	std::shared_ptr<FGUI::CWidgets> CContainer::GetFocusedWidget()
 	{
-		return m_pFocusedWidget;
+		std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
+		return cWindow->m_pFocusedWidget;
 	}
 
 	void CContainer::AddCallback(std::function<void()> callback)
@@ -301,13 +304,14 @@ namespace FGUI
 
 		// this will hold the current skipped widget
 		std::shared_ptr<FGUI::CWidgets> pWidgetToSkip = nullptr;
+		std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 
-		if (m_bIsFocusingOnWidget)
+		if (cWindow->m_bIsFocusingOnWidget)
 		{
-			if (m_pFocusedWidget)
+			if (cWindow->m_pFocusedWidget)
 			{
 				// set the widget that will be skipped
-				pWidgetToSkip = m_pFocusedWidget;
+				pWidgetToSkip = cWindow->m_pFocusedWidget;
 
 				// tell the container to skip this widget
 				bSkipWidget = true;
@@ -501,18 +505,19 @@ namespace FGUI
 
 		// this will hold the current skipped widget
 		std::shared_ptr<FGUI::CWidgets> pWidgetToSkip = nullptr;
+		std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 
 		// handle skipped widgets first
-		if (m_bIsFocusingOnWidget)
+		if (cWindow->m_bIsFocusingOnWidget)
 		{
 			// check if the skipped widget can be used
-			if (m_pFocusedWidget && m_pFocusedWidget->IsUnlocked())
+			if (cWindow->m_pFocusedWidget && cWindow->m_pFocusedWidget->IsUnlocked())
 			{
 				// tell the container to skip this widget
 				bSkipWidget = true;
 
 				// assign the widget that will be skipped
-				pWidgetToSkip = m_pFocusedWidget;
+				pWidgetToSkip = cWindow->m_pFocusedWidget;
 
 				FGUI::AREA arSkippedWidgetRegion = { pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight };
 
@@ -523,7 +528,7 @@ namespace FGUI
 						pWidgetToSkip->Update();
 
 						// check if the skipped widget can be clicked
-						if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && bSkipWidget)
+						if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && bSkipWidget && pWidgetToSkip->GetParentWidget()->GetTitle() == this->GetTitle())
 						{
 							pWidgetToSkip->Input();
 
@@ -540,7 +545,7 @@ namespace FGUI
 					pWidgetToSkip->Update();
 
 					// check if the skipped widget can be clicked
-					if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && bSkipWidget)
+					if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && bSkipWidget && pWidgetToSkip->GetParentWidget()->GetTitle() == this->GetTitle())
 					{
 						pWidgetToSkip->Input();
 
@@ -634,6 +639,11 @@ namespace FGUI
 						FGUI::DIMENSION dmCheckBoxTitleTextSize = FGUI::RENDER.GetTextSize(pWidgets->GetFont(), pWidgets->GetTitle());
 
 						arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, (pWidgets->GetSize().m_iWidth + dmCheckBoxTitleTextSize.m_iWidth) + 5, pWidgets->GetSize().m_iHeight };
+					}
+					else if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::TABPANEL))
+					{
+						std::shared_ptr<FGUI::CTabPanel> cTabs = std::reinterpret_pointer_cast<FGUI::CTabPanel>(pWidgets);
+						arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth * cTabs->GetTabsCount(), pWidgets->GetSize().m_iHeight};
 					}
 					else
 					{

@@ -321,3 +321,8 @@ std::string MEM::BytesToPattern(const std::uint8_t* arrBytes, const std::size_t 
 
 	return szPattern;
 }
+
+void MEM::Init()
+{
+
+}

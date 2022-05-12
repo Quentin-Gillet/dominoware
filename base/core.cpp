@@ -21,6 +21,8 @@
 #include "core/hooks.h"
 // used: menu
 #include "core/menu/menu.h"
+// used: skins dump
+#include "features/skinchanger.h"
 
 DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 {
@@ -33,17 +35,17 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 		while (MEM::GetModuleBaseHandle(SERVERBROWSER_DLL) == nullptr)
 			std::this_thread::sleep_for(200ms);
 
-		#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 		// console logging
 		if (!L::Attach(XorStr("dominoware's developer-mode")))
 			throw std::runtime_error(XorStr("failed to attach console"));
 
 		L::Print(XorStr("console opened"));
-		#else
+#else
 		// file logging
 		// @note: use std::ios::app instead std::ios::trunc to not clear every time
 		L::ofsFile.open(C::GetWorkingPath().append(XorStr("dominoware.log")), std::ios::out | std::ios::trunc);
-		#endif
+#endif
 
 		// capture interfaces from game/steam (not always) modules
 		if (!I::Setup())
@@ -52,14 +54,14 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 		L::Print(XorStr("interfaces captured"));
 
 		// version check to know when u need to fix something
-		#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 		if (strcmp(I::Engine->GetProductVersionString(), XorStr("1.38.2.8")) != 0)
 		{
 			L::PushConsoleColor(FOREGROUND_YELLOW);
 			L::Print(XorStr("[warning] version doesnt match! current cs:go version: {}"), I::Engine->GetProductVersionString());
 			L::PopConsoleColor();
 		}
-		#endif
+#endif
 
 		/*
 		 * fill networkable variables map
@@ -84,11 +86,11 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 
 		W::Initialize();
 		L::Print("[MENU] Menu initialized.");
-		#if 0
+#if 0
 		// start tracking entities
 		U::EntityListener.Setup();
 		L::Print(XorStr("entity listener initialized"));
-		#endif
+#endif
 
 		// start tracking specified events from vector
 		// @note: all events list: https://wiki.alliedmods.net/Counter-Strike:_Global_Offensive_Events
@@ -107,6 +109,8 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 
 		L::Print(XorStr("proxies applied"));
 
+		CSkinChanger::Get().Init();
+
 		// show message about successful load in logs and in game console
 		L::PushConsoleColor(FOREGROUND_MAGENTA);
 		L::Print(XorStr("dominoware successfully loaded"));
@@ -121,13 +125,13 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 		L::Print(XorStr("[error] {}"), ex.what());
 		L::PopConsoleColor();
 
-		#ifdef _DEBUG
+#ifdef _DEBUG
 		// show error message window (or replace to your exception handler)
 		_RPT0(_CRT_ERROR, ex.what());
-		#else
+#else
 		// unload
 		FreeLibraryAndExitThread(static_cast<HMODULE>(lpParameter), EXIT_FAILURE);
-		#endif
+#endif
 	}
 
 	return 1UL;
@@ -139,10 +143,10 @@ DWORD WINAPI OnDllDetach(LPVOID lpParameter)
 	while (!IPT::IsKeyReleased(S::KEY_END) && !IPT::IsKeyHeld(S::KEY_END))
 		std::this_thread::sleep_for(500ms);
 
-	#if 0
+#if 0
 	// destroy entity listener
 	U::EntityListener.Destroy();
-	#endif
+#endif
 
 	// destroy events listener
 	U::EventListener.Destroy();
@@ -156,16 +160,16 @@ DWORD WINAPI OnDllDetach(LPVOID lpParameter)
 	// restore hooks
 	H::Restore();
 
-	#ifdef DEBUG_CONSOLE
+#ifdef DEBUG_CONSOLE
 	// detach console
 	L::Detach();
-	#else
+#else
 	// close logging output file
 	if (L::ofsFile.is_open())
 		L::ofsFile.close();
-	#endif
+#endif
 
-	 // free our library memory from process and exit from our thread
+	// free our library memory from process and exit from our thread
 	FreeLibraryAndExitThread((HMODULE)lpParameter, EXIT_SUCCESS);
 }
 

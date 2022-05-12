@@ -50,10 +50,11 @@ namespace FGUI
 	void CColorPicker::Geometry(FGUI::WIDGET_STATUS status)
 	{
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+		FGUI::COLOR accentColor = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer())->GetAccentColor();
 
 		// color picker button body
-		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft), (arWidgetRegion.m_iTop + 2), m_dmSize.m_iWidth, (m_dmSize.m_iHeight - 2), { 23, 23, 23 });
-		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 3), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 4), { 195, 195, 195 });
+		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft), (arWidgetRegion.m_iTop + 2), m_dmSize.m_iWidth, (m_dmSize.m_iHeight - 2), accentColor);
+		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 3), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 4), { 40, 40, 40 });
 		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 3), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 4), m_clrDefault);
 
 		if (m_bIsOpened)
@@ -64,8 +65,8 @@ namespace FGUI
 
 			// color picker body
 			FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom, { 100, 100, 100 });
-			FGUI::RENDER.Outline(arColorPickerRegion.m_iLeft - 1, arColorPickerRegion.m_iTop - 1, (arColorPickerRegion.m_iRight + 3), (arColorPickerRegion.m_iBottom + 3), { 220, 220, 220 });
-			FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, (arColorPickerRegion.m_iRight + 40), arColorPickerRegion.m_iBottom, { 245, 245, 245 });
+			FGUI::RENDER.Outline(arColorPickerRegion.m_iLeft - 1, arColorPickerRegion.m_iTop - 1, (arColorPickerRegion.m_iRight + 3), (arColorPickerRegion.m_iBottom + 3), { 23, 23, 23 });
+			FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, (arColorPickerRegion.m_iRight + 40), arColorPickerRegion.m_iBottom, { 23, 23, 23 });
 
 			for (std::size_t i = 0; i < static_cast<unsigned int>(arColorPickerRegion.m_iBottom); i += GetPixelation())
 			{
@@ -93,15 +94,15 @@ namespace FGUI
 
 			// color hsb body
 			FGUI::RENDER.Outline((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 1, (arColorPickerRegion.m_iTop + 1), 1, arColorPickerRegion.m_iBottom + 2, { 23, 23, 23 });
-			FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + iClampedRelativePosX), (arColorPickerRegion.m_iTop + iClampedRelativePosY), 5, 5, { 35, 35, 35 });
+			FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + iClampedRelativePosX), (arColorPickerRegion.m_iTop + iClampedRelativePosY), 5, 5, { 35, 35, 255 });
 
 			// hue bar body
 			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, { 23, 23, 23 });
-			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 5), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * FGUI::COLOR::GetHue(m_clrDefault)), 3, 3, { 225, 255, 255 });
+			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 5), arColorPickerRegion.m_iTop + (static_cast<float>(arColorPickerRegion.m_iBottom) * FGUI::COLOR::GetHue(m_clrDefault)), 3, 3, { 23, 255, 23 });
 
 			// alpha bar body
 			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, { 23, 23, 23 });
-			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 25), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * (m_clrDefault.m_ucAlpha / 255.f)), 3, 3, { 225, 225, 225 });
+			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 25), arColorPickerRegion.m_iTop + (static_cast<float>(arColorPickerRegion.m_iBottom) * (m_clrDefault.m_ucAlpha / 255.f)), 3, 3, { 255, 23, 23 });
 		}
 
 		IGNORE_ARGS(status);
@@ -109,16 +110,16 @@ namespace FGUI
 
 	void CColorPicker::Update()
 	{
-		m_dmSize = { 20, 15 }; // this is required to keep the widget from being padded on groupboxes
+		m_dmSize = { 20, 16 }; // this is required to keep the widget from being padded on groupboxes
 
-		static constexpr FGUI::DIMENSION dmColorPickerSize = { 135, 135 };
+		static constexpr FGUI::DIMENSION dmColorPickerSize = { 140, 135 };
 
 		if (m_bIsOpened)
 		{
 			FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 			FGUI::AREA arColorHSBRegion = { arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom };
-			FGUI::AREA arColorHueRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
-			FGUI::AREA arColorAlphaRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
+			FGUI::AREA arColorHueRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 5, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
+			FGUI::AREA arColorAlphaRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 25, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
 
 			// switches
 			static bool bColorHSBSelected = false;
@@ -166,7 +167,7 @@ namespace FGUI
 			{
 				float flAlpha = (static_cast<float>(ptCursorPos.m_iY - arColorAlphaRegion.m_iTop) / 150.f) * 255.f;
 
-				m_clrDefault.m_ucAlpha = std::clamp(flAlpha, 0.f, 255.f);
+				m_clrDefault.m_ucAlpha = static_cast<uint8_t>(std::clamp(flAlpha, 0.f, 255.f));
 				if (m_fnctCallback)
 				{
 					// call function

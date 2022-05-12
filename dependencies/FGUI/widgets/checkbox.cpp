@@ -11,7 +11,7 @@ namespace FGUI
 	CCheckBox::CCheckBox()
 	{
 		m_strTitle = "CheckBox";
-		m_dmSize = { 10, 10 };
+		m_dmSize = { 14, 14 };
 		m_anyFont = 0;
 		m_strTooltip = "";
 		m_bIsChecked = false;
@@ -42,23 +42,25 @@ namespace FGUI
 		FGUI::COLOR accentColor = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer())->GetAccentColor();
 
 		// checkbox body
-		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft - 1), (arWidgetRegion.m_iTop - 1), arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 35, 35, 35 });
-		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 25, 25, 25 });
+		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft - 1), (arWidgetRegion.m_iTop - 1), arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 50, 50, 50 });
+		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 40, 40, 40 });
 
 		if (m_bIsChecked)
 		{
 			if (status == FGUI::WIDGET_STATUS::HOVERED)
 			{
-				FGUI::RENDER.Outline((arWidgetRegion.m_iLeft - 1), (arWidgetRegion.m_iTop - 1), arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, accentColor);
+				FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 3), (arWidgetRegion.m_iTop + 3), (arWidgetRegion.m_iRight - 8), (arWidgetRegion.m_iBottom - 8), accentColor);
 			}
-
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 4), (arWidgetRegion.m_iBottom - 4), accentColor);
+			else
+			{
+				FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 4), (arWidgetRegion.m_iBottom - 4), accentColor);
+			}
 		}
 		else
 		{
 			if (status == FGUI::WIDGET_STATUS::HOVERED)
 			{
-				FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 3), (arWidgetRegion.m_iTop + 3), (arWidgetRegion.m_iRight - 8), (arWidgetRegion.m_iBottom - 8), accentColor);
+				FGUI::RENDER.Outline((arWidgetRegion.m_iLeft - 1), (arWidgetRegion.m_iTop - 1), arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, accentColor);
 			}
 		}
 
@@ -68,7 +70,7 @@ namespace FGUI
 
 	void CCheckBox::Update()
 	{
-		m_dmSize = { 16, 16 }; // this is required to keep the widget from being padded on Containers
+		m_dmSize = { 14, 14 }; // this is required to keep the widget from being padded on Containers
 
 		if (m_bIsChecked)
 		{

@@ -11,26 +11,74 @@ void W::Initialize()
 	{
 		Widgets::cMainTabPanel = std::make_shared<FGUI::CTabPanel>();
 		Widgets::cMainTabPanel->SetStyle(FGUI::ESTabLayout_t::HORIZONTAL);
-		
-		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Misc", "Skins", "Config" }).SpawnIn(Widgets::cMainMenu, false);
+
+		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Skins", "Misc", "Config" }).SpawnIn(Widgets::cMainMenu, false);
 		{
 			Widgets::cGroupbox = std::make_shared<FGUI::CContainer>();
 			cBuilder.Widget(Widgets::cGroupbox).Title("Test").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 0).SpawnIn(Widgets::cMainMenu, false);
 			{
 				Widgets::cCheckTest = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Position(10, 20).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox, true);
+				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Position(10, 20).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cColorPicker = std::make_shared<FGUI::CColorPicker>();
-				cBuilder.Widget(Widgets::cColorPicker).Title("Accent Color").Position(215, 20).Color(Widgets::cMainMenu->GetAccentColor()).Callback(UpdateAccentColor).SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cColorPicker).Title("Accent Color").Position(200, 12).Color(Widgets::cMainMenu->GetAccentColor()).Callback(UpdateAccentColor).SpawnIn(Widgets::cGroupbox);
+
+				Widgets::cSlider = std::make_shared<FGUI::CSlider>();
+				cBuilder.Widget(Widgets::cSlider).Title("Slider wesh").Position(10, 60).Font(F::WhitneyMenu).Prefix("%").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
+				
+				Widgets::cTextBox = std::make_shared<FGUI::CTextBox>();
+				cBuilder.Widget(Widgets::cTextBox).Title("Text tesrt").Position(10, 130).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupbox);
+
+				Widgets::cComboBox = std::make_shared<FGUI::CComboBox>();
+				cBuilder.Widget(Widgets::cComboBox).Title("Test combo").Position(10, 90).Font(F::WhitneyMenu)
+					.Entries({"Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3" }).SpawnIn(Widgets::cGroupbox);
 			}
+
+			Widgets::cGroupboxVisual = std::make_shared<FGUI::CContainer>();
+			cBuilder.Widget(Widgets::cGroupboxVisual).Title("Esp").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 1).SpawnIn(Widgets::cMainMenu, false);
+			{
+				Widgets::cItemSelector = std::make_shared<FGUI::CItemSelector>();
+				cBuilder.Widget(Widgets::cItemSelector).Title("Item test").Position(10, 20).Font(F::WhitneyMenu)
+					.Entries({"test 1", "test 2", "iteem 3", "item 5"})
+					.SpawnIn(Widgets::cGroupboxVisual, true);
+			}
+
+			Widgets::cGroupboxSkins = std::make_shared<FGUI::CContainer>();
+			cBuilder.Widget(Widgets::cGroupboxSkins).Title("Skin Changer").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 2).SpawnIn(Widgets::cMainMenu, false);
+			{
+				Widgets::cWeaponSelection = std::make_shared<FGUI::CComboBox>();
+				cBuilder.Widget(Widgets::cWeaponSelection).Title("Weapons").Position(10, 20).Font(F::WhitneyMenu).Callback(UpdateSkinList).SpawnIn(Widgets::cGroupboxSkins);
+
+				Widgets::cSkinSelection = std::make_shared<FGUI::CComboBox>();
+				cBuilder.Widget(Widgets::cSkinSelection).Title("Skins").Position(10, 70).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxSkins).Entry("default");
+			}
+
 		}
 	}
+
+	InitWeaponList();
 }
 
 void W::UpdateAccentColor()
 {
 	W::Widgets::cMainMenu->SetAccentColor(W::Widgets::cColorPicker->GetColor());
-	L::Print("CHANGE");
+}
+
+void W::InitWeaponList()
+{
+	for (const auto& skin : mapItemList)
+	{
+		Widgets::cWeaponSelection->AddEntry(skin.second.szName, skin.first);
+	}
+}
+
+void W::UpdateSkinList()
+{
+	Widgets::cSkinSelection->ClearEntries();
+	for (const auto& skin : CSkinChanger::Get().GetSkinsForAWeapon(static_cast<EItemDefinitionIndex>(Widgets::cWeaponSelection->GetValue())))
+	{
+		Widgets::cSkinSelection->AddEntry(skin.name, skin.id);
+	}
 }
 
 void W::Render()
