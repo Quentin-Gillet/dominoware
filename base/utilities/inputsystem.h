@@ -21,6 +21,10 @@ namespace IPT
 	bool IsKeyReleased(unsigned uKeyCode);
 	bool IsKeyPressed(unsigned uKeyCode);
 
+	bool GetMouseScrollWheel(bool down);
+	inline bool bMousewheeldown = false;
+	inline bool bMousewheelup = false;
+
 	FGUI::POINT GetCursorPosition();
 	FGUI::POINT GetCursorPositionDelta();
 

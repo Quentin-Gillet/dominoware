@@ -43,6 +43,7 @@ namespace FGUI
 		using pGetCursorPos = std::add_pointer_t<FGUI::POINT()>;
 		using pGetCursorPosDelta = std::add_pointer_t<FGUI::POINT()>;
 		using pIsCursorInArea = std::add_pointer_t<bool(FGUI::AREA)>;
+		using pGetMouseScrollWheel = std::add_pointer_t<bool(bool)>;
 
 		using RENDER_MANAGER = struct SRenderManager_t
 		{
@@ -66,6 +67,7 @@ namespace FGUI
 			pGetCursorPos GetCursorPos;
 			pGetCursorPosDelta GetCursorPosDelta;
 			pIsCursorInArea IsCursorInArea;
+			pGetMouseScrollWheel GetMouseScrollWheel;
 
 			// @brief: set the input type
 			// @args: FGUI::INPUT_TYPE = input type (NONE, WIN_32, INPUT_SYSTEM or CUSTOM)

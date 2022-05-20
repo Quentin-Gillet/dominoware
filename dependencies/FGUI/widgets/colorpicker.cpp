@@ -13,6 +13,7 @@ namespace FGUI
 		m_strTitle = "";
 		m_bIsOpened = false;
 		m_dmSize = { 20, 16 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_prRelativePos = { 5.f, 5.f };
 		m_clrDefault = { 1, 1, 1 };
 		m_anyFont = 0;
@@ -177,12 +178,6 @@ namespace FGUI
 
 			// keep widget focused
 			std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
-
-			if (FGUI::INPUT.IsCursorInArea(arColorHueRegion))
-			{
-				// change cursor
-				std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetCursor(CURSOR_STYLE::PIPETTE);
-			}
 		}
 	}
 

@@ -15,6 +15,7 @@ namespace FGUI
 		m_anyFont = 0;
 		m_iEntrySpacing = 20;
 		m_dmSize = { 250, 300 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_ullSelectedEntry = 0;
 		m_iScrollThumbPosition = 0;
 		m_fnctCallback = nullptr;

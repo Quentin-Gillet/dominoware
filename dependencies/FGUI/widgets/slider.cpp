@@ -14,6 +14,7 @@ namespace FGUI
 		m_strTitle = "Slider";
 		m_strPrefix = "";
 		m_dmSize = { 100, 8 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_flValue = 0.f;
 		m_bIsDragging = false;
 		m_rngBoundaries = { 0.f, 0.f };

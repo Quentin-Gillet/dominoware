@@ -65,11 +65,19 @@ namespace FGUI
 	{
 		m_dmSize.m_iWidth = size.m_iWidth;
 		m_dmSize.m_iHeight = size.m_iHeight;
+
+		m_dmSizeDefault.m_iWidth = size.m_iWidth;
+		m_dmSizeDefault.m_iHeight = size.m_iHeight;
 	}
 
 	FGUI::DIMENSION CWidgets::GetSize()
 	{
 		return m_dmSize;
+	}
+
+	FGUI::DIMENSION CWidgets::GetSizeDefault()
+	{
+		return m_dmSizeDefault;
 	}
 
 	void CWidgets::SetTitle(std::string title)

@@ -17,6 +17,7 @@ namespace FGUI
 		m_anyFont = 0;
 		m_ullSelectedEntry = 0;
 		m_dmSize = { 110, 25 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_prgpTabButtons = {};
 		m_strTooltip = "";
 		m_nStyle = static_cast<int>(TAB_STYLE::HORIZONTAL);

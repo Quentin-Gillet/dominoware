@@ -4,7 +4,6 @@ void W::Initialize()
 {
 	static FGUI::CBuilder cBuilder;
 	Widgets::cMainMenu = std::make_shared<FGUI::CContainer>();
-	Widgets::cMainMenu->SetCursor(FGUI::CURSOR_STYLE::NONE);
 	Widgets::cMainMenu->SetAccentColor({ 14 , 180, 191 });
 
 	cBuilder.Widget(Widgets::cMainMenu).Title("Dominoware.xyz").Position(400, 400).Size(650, 400).Font(F::WhitneyMenu).Key(S::KEY_RCONTROL).Flag(FGUI::WIDGET_FLAG::LIMIT);

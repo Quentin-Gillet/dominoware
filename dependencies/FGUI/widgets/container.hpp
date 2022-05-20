@@ -14,14 +14,6 @@
 
 namespace FGUI
 {
-	using CURSOR_STYLE = enum struct ESCursorStyle : int {
-		NONE = 0,
-		ARROW,
-		HAND,
-		IBEAM,
-		PIPETTE,
-		MOVE
-	};
 
 	class CContainer : public FGUI::CWidgets
 	{
@@ -79,10 +71,6 @@ namespace FGUI
 		// bool padding = enable/disable padding
 		void AddWidget(std::shared_ptr<FGUI::CWidgets> widget, bool padding);
 
-		// @brief: sets the current Cursor style
-		// @args: FGUI::CURSOR_STYLE cursor = cursor style
-		void SetCursor(FGUI::CURSOR_STYLE cursor);
-
 		// @brief: populate widget geometry (draw widget)
 		// @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
 		void Geometry(FGUI::WIDGET_STATUS status) override;
@@ -109,16 +97,9 @@ namespace FGUI
 
 		// @brief: get accent color for gui
 		FGUI::COLOR GetAccentColor();
-
-	protected:
-
-		// @brief: handle dynamic Cursors drawing
-		void Cursor();
-
 	private:
 		bool m_bIsOpened;
 		std::string m_strConfigName;
-		int m_nCursorStyle;
 		bool m_bScrollBarState;
 		unsigned int m_uiKey;
 		std::shared_ptr<FGUI::CWidgets> m_pFocusedWidget;

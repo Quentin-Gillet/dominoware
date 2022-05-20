@@ -22,7 +22,6 @@ namespace FGUI
 		m_bIsFocusingOnWidget = false;
 		m_pParentWidget = nullptr;
 		m_pFocusedWidget = nullptr;
-		m_nCursorStyle = static_cast<int>(CURSOR_STYLE::ARROW);
 		m_nType = static_cast<int>(WIDGET_TYPE::CONTAINER);
 		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::DRAW_FIRST);
 	}
@@ -44,7 +43,6 @@ namespace FGUI
 				Update();
 				Geometry(FGUI::WIDGET_STATUS::NONE);
 				Tooltip();
-				//Cursor();
 			}
 		}
 	}
@@ -224,11 +222,6 @@ namespace FGUI
 		}
 	}
 
-	void CContainer::SetCursor(FGUI::CURSOR_STYLE style)
-	{
-		m_nCursorStyle = static_cast<int>(style);
-	}
-
 	void CContainer::Geometry(FGUI::WIDGET_STATUS status)
 	{
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
@@ -283,13 +276,13 @@ namespace FGUI
 				static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
 
 				// scrollbar thumb size
-				float flScrollbarThumbSize = ((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight) /
+				float flScrollbarThumbSize = ((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSizeDefault().m_iHeight) /
 					static_cast<float>(m_prgpWidgets.back()->GetPosition().m_iY)) *
-					static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight));
+					static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSizeDefault().m_iHeight));
 
 				// calculate the scrollbar thumb position
 				float flScrollbarThumbPosition = ((m_dmSize.m_iHeight - 10) - flScrollbarThumbSize) * static_cast<float>(m_iWidgetScrollOffset /
-					static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 10)));
+					static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSizeDefault().m_iHeight) - (m_dmSize.m_iHeight - 10)));
 
 				// scrollbar body
 				FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, { 50, 50, 50 });
@@ -342,7 +335,7 @@ namespace FGUI
 				if (m_bScrollBarState)
 				{
 					// check if the widgets are inside the boundaries of the groupbox
-					if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+					if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSizeDefault().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
 					{
 						if (FGUI::INPUT.IsCursorInArea(arWidgetsRegion) && !GetFocusedWidget())
 						{
@@ -378,7 +371,7 @@ namespace FGUI
 				if (m_bScrollBarState)
 				{
 					// check if the widgets are inside the boundaries of the groupbox
-					if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+					if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSizeDefault().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
 					{
 						if (FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion))
 						{
@@ -405,8 +398,6 @@ namespace FGUI
 
 	void CContainer::Update()
 	{
-		// reset cursor
-		SetCursor(CURSOR_STYLE::ARROW);
 		static std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 		// check if the container is behaving like a window
 		if (!GetParentWidget())
@@ -444,8 +435,6 @@ namespace FGUI
 					m_ptPosition.m_iY = std::clamp(m_ptPosition.m_iY, 0, (FGUI::RENDER.GetScreenSize().m_iHeight - m_dmSize.m_iHeight));
 				}
 
-				// change cursor
-				SetCursor(CURSOR_STYLE::MOVE);
 			}
 
 			if (FGUI::INPUT.IsKeyReleased(MOUSE_1))
@@ -465,9 +454,6 @@ namespace FGUI
 
 				if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
 				{
-					// change cursor
-					SetCursor(CURSOR_STYLE::HAND);
-
 					if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
 					{
 						bIsDraggingThumb = true;
@@ -496,13 +482,12 @@ namespace FGUI
 
 				if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
 				{
-					if (FGUI::INPUT.IsKeyReleased(MOUSE_WHEEL_DOWN))
+					if (FGUI::INPUT.GetMouseScrollWheel(true))
 					{
-						m_iWidgetScrollOffset += iLinesToScroll;
-						L::Print("SROLL DOWN");
+						m_iWidgetScrollOffset += iLinesToScroll * 5;
 					}
-					else if (FGUI::INPUT.IsKeyPressed(MOUSE_WHEEL_UP))
-						m_iWidgetScrollOffset -= iLinesToScroll;
+					else if (FGUI::INPUT.GetMouseScrollWheel(false))
+						m_iWidgetScrollOffset -= iLinesToScroll * 5;
 				}
 
 				// clamp scrolling
@@ -532,7 +517,7 @@ namespace FGUI
 
 				if (m_bScrollBarState)
 				{
-					if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+					if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSizeDefault().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
 					{
 						pWidgetToSkip->Update();
 
@@ -565,23 +550,6 @@ namespace FGUI
 						pWidgetToSkip.reset();
 					}
 				}
-
-				// change cursor
-				if (pWidgetToSkip && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && pWidgetToSkip->GetType() != static_cast<int>(WIDGET_TYPE::TABPANEL) && bSkipWidget)
-				{
-					if (pWidgetToSkip->GetType() == static_cast<int>(WIDGET_TYPE::CONTAINER))
-					{
-						SetCursor(CURSOR_STYLE::ARROW);
-					}
-					else if (pWidgetToSkip->GetType() == static_cast<int>(WIDGET_TYPE::TEXTBOX))
-					{
-						SetCursor(CURSOR_STYLE::IBEAM);
-					}
-					else
-					{
-						SetCursor(CURSOR_STYLE::HAND);
-					}
-				}
 			}
 		}
 
@@ -604,7 +572,7 @@ namespace FGUI
 
 				if (m_bScrollBarState)
 				{
-					if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+					if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSizeDefault().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
 					{
 						pWidgets->Update();
 
@@ -672,23 +640,6 @@ namespace FGUI
 						{
 							SetFocusedWidget(nullptr);
 						}
-					}
-				}
-
-				// change cursor
-				if (pWidgets && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && pWidgets->GetType() != static_cast<int>(WIDGET_TYPE::TABPANEL) && !bSkipWidget)
-				{
-					if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::CONTAINER))
-					{
-						SetCursor(CURSOR_STYLE::ARROW);
-					}
-					else if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::TEXTBOX))
-					{
-						SetCursor(CURSOR_STYLE::IBEAM);
-					}
-					else
-					{
-						SetCursor(CURSOR_STYLE::HAND);
 					}
 				}
 			}
@@ -759,170 +710,4 @@ namespace FGUI
 			}
 		}
 	}
-
-	void CContainer::Cursor()
-	{
-		FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
-
-		switch (m_nCursorStyle)
-		{
-		case static_cast<int>(CURSOR_STYLE::ARROW):
-		{
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 1, ptCursorPos.m_iY, 1, 17, { 1, 1, 1 });
-
-			for (std::size_t i = 0; i < 11; i++)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 2 + i, ptCursorPos.m_iY + 1 + i, 1, 1, { 1, 1, 1 });
-			}
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8, ptCursorPos.m_iY + 12, 5, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8, ptCursorPos.m_iY + 13, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 9, ptCursorPos.m_iY + 14, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 10, ptCursorPos.m_iY + 16, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8, ptCursorPos.m_iY + 18, 2, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 7, ptCursorPos.m_iY + 16, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 6, ptCursorPos.m_iY + 14, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 5, ptCursorPos.m_iY + 13, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 4, ptCursorPos.m_iY + 14, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 3, ptCursorPos.m_iY + 15, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 2, ptCursorPos.m_iY + 16, 1, 1, { 1, 1, 1 });
-
-			for (std::size_t i = 0; i < 4; i++)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 2 + i, ptCursorPos.m_iY + 2 + i, 1, 14 - (i * 2), { 245, 245, 254 });
-			}
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 6, ptCursorPos.m_iY + 6, 1, 8, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 7, ptCursorPos.m_iY + 7, 1, 9, { 245, 245, 254 });
-
-			for (std::size_t i = 0; i < 4; i++)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8 + i, ptCursorPos.m_iY + 8 + i, 1, 4 - i, { 245, 245, 254 });
-			}
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8, ptCursorPos.m_iY + 14, 1, 4, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 9, ptCursorPos.m_iY + 16, 1, 2, { 245, 245, 254 });
-
-			break;
-		}
-		case static_cast<int>(CURSOR_STYLE::HAND):
-		{
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 6, ptCursorPos.m_iY + 5 + 5 + -5, 7, 9, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5, ptCursorPos.m_iY + 5 + 7 + -5, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 1, ptCursorPos.m_iY + 5 + 6 + -5, 1, 1, { 1, 1, 1 });
-
-			for (std::size_t i = 0; i < 3; ++i)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 2 + i, ptCursorPos.m_iY + 5 + 6 + i + -5, 1, 1, { 1, 1, 1 });
-			}
-
-			for (std::size_t i = 0; i < 4; ++i)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 1 + i, ptCursorPos.m_iY + 5 + 9 + i + -5, 1, 1, { 1, 1, 1 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 1 + i, ptCursorPos.m_iY + 5 + 7 + i + -5, 1, 1, { 245, 245, 254 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 2 + i, ptCursorPos.m_iY + 5 + 7 + i + -5, 1, 1, { 245, 245, 254 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 1 + i, ptCursorPos.m_iY + 5 + 8 + i + -5, 1, 1, { 245, 245, 254 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 3 + i, ptCursorPos.m_iY + 5 + 11 + i + -5, 1, 1, { 245, 245, 254 });
-			}
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 4, ptCursorPos.m_iY + 5 + 1 + -5, 1, 7, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 5, ptCursorPos.m_iY + 5 + 0 + -5, 2, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 5, ptCursorPos.m_iY + 5 + 15 + -5, 5, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 7, ptCursorPos.m_iY + 5 + 1 + -5, 1, 6, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 8, ptCursorPos.m_iY + 5 + 4 + -5, 4, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 10, ptCursorPos.m_iY + 5 + 5 + -5, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 12, ptCursorPos.m_iY + 5 + 5 + -5, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 13, ptCursorPos.m_iY + 5 + 5 + -5, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 14, ptCursorPos.m_iY + 5 + 6 + -5, 1, 5, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 13, ptCursorPos.m_iY + 5 + 11 + -5, 1, 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 12, ptCursorPos.m_iY + 5 + 13 + -5, 1, 3, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 5, ptCursorPos.m_iY + 5 + 1 + -5, 2, 13, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 7, ptCursorPos.m_iY + 5 + 14 + -5, 3, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 13, ptCursorPos.m_iY + 5 + 6 + -5, 1, 5, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 11, ptCursorPos.m_iY + 5 + 14 + -5, 1, 1, { 245, 245, 254 });
-
-			for (std::size_t i = 0; i < 2; ++i)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 10 + i, ptCursorPos.m_iY + 5 + 14 + i + -5, 1, 1, { 1, 1, 1 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 4 + i, ptCursorPos.m_iY + 5 + 13 + i + -5, 1, 1, { 1, 1, 1 });
-			}
-
-			break;
-		}
-		case static_cast<int>(CURSOR_STYLE::PIPETTE):
-		{
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX, ptCursorPos.m_iY + 14 + -15, 1, 1, { 1, 1, 1 });
-
-			for (std::size_t i = 0; i < 2; ++i)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + i, ptCursorPos.m_iY + 13 - i + -15, 1, 1, { 1, 1, 1 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 1 + i, ptCursorPos.m_iY + 14 - i + -15, 1, 1, { 1, 1, 1 });
-			}
-
-			for (std::size_t i = 0; i < 6; ++i)
-			{
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 1 + i, ptCursorPos.m_iY + 11 - i + -15, 1, 1, { 1, 1, 1 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 3 + i, ptCursorPos.m_iY + 13 - i + -15, 1, 1, { 1, 1, 1 });
-
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 2 + i, ptCursorPos.m_iY + 11 - i + -15, 1, 1, { 245, 245, 254 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 3 + i, ptCursorPos.m_iY + 12 - i + -15, 1, 1, { 245, 245, 254 });
-				FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 2 + i, ptCursorPos.m_iY + 12 - i + -15, 1, 1, { 245, 245, 254 });
-			}
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 8, ptCursorPos.m_iY + 6 + -15, 1, 1, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 7, ptCursorPos.m_iY + 3 + -15, 6, 3, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 9, ptCursorPos.m_iY + 2 + -15, 3, 6, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 11, ptCursorPos.m_iY + -15, 3, 5, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX + 10, ptCursorPos.m_iY + 1 + -15, 5, 3, { 1, 1, 1 });
-
-			break;
-		}
-		case static_cast<int>(CURSOR_STYLE::MOVE):
-		{
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 - 1, ptCursorPos.m_iY - 1 - 1, 5 + 2, 1 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 - 1, ptCursorPos.m_iY - 2 - 1, 3 + 2, 1 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - 1, ptCursorPos.m_iY - 3 - 1, 1 + 2, 1 + 2, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5, ptCursorPos.m_iY - 1, 5, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4, ptCursorPos.m_iY - 2, 3, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3, ptCursorPos.m_iY - 3, 1, 1, { 245, 245, 254 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - 7 - 1, ptCursorPos.m_iY + 11 - 7 - 1, 1 + 2, 5 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 - 7 - 1, ptCursorPos.m_iY + 12 - 7 - 1, 1 + 2, 3 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 - 7 - 1, ptCursorPos.m_iY + 13 - 7 - 1, 1 + 2, 1 + 2, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - 7, ptCursorPos.m_iY + 11 - 7, 1, 5, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 - 7, ptCursorPos.m_iY + 12 - 7, 1, 3, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 - 7, ptCursorPos.m_iY + 13 - 7, 1, 1, { 245, 245, 254 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 - 1, ptCursorPos.m_iY + 12 - 1, 5 + 2, 1 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 - 1, ptCursorPos.m_iY + 13 - 1, 3 + 2, 1 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - 1, ptCursorPos.m_iY + 14 - 1, 1 + 2, 1 + 2, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5, ptCursorPos.m_iY + 12, 5, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4, ptCursorPos.m_iY + 13, 3, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3, ptCursorPos.m_iY + 14, 1, 1, { 245, 245, 254 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 9 - 1, ptCursorPos.m_iY + 11 - 7 - 1, 1 + 2, 5 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 + 9 - 1, ptCursorPos.m_iY + 12 - 7 - 1, 1 + 2, 3 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 + 9 - 1, ptCursorPos.m_iY + 13 - 7 - 1, 1 + 2, 1 + 2, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 5 + 9, ptCursorPos.m_iY + 11 - 7, 1, 5, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 4 + 9, ptCursorPos.m_iY + 12 - 7, 1, 3, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 + 9, ptCursorPos.m_iY + 13 - 7, 1, 1, { 245, 245, 254 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - (12 / 2) - 1, ptCursorPos.m_iY + (12 / 2) - 1, 13 + 2, 1 + 2, { 1, 1, 1 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - 1, ptCursorPos.m_iY - 1, 1 + 2, 12 + 2, { 1, 1, 1 });
-
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3 - (12 / 2), ptCursorPos.m_iY + (12 / 2), 13, 1, { 245, 245, 254 });
-			FGUI::RENDER.Rectangle(ptCursorPos.m_iX - 3, ptCursorPos.m_iY, 1, 12, { 245, 245, 254 });
-
-			break;
-		}
-		default:
-			return;
-		}
-	}
-
 } // namespace FGUI

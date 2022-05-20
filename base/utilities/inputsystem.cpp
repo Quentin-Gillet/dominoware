@@ -16,6 +16,7 @@ void IPT::Setup()
 	FGUI::INPUT.GetCursorPos = IPT::GetCursorPosition;
 	FGUI::INPUT.GetCursorPosDelta = IPT::GetCursorPositionDelta;
 	FGUI::INPUT.IsCursorInArea = IPT::IsCursorInArea;
+	FGUI::INPUT.GetMouseScrollWheel = IPT::GetMouseScrollWheel;
 
 	FGUI::INPUT.SetInputType(FGUI::INPUT_TYPE::INPUT_SYSTEM);
 
@@ -39,6 +40,17 @@ void IPT::PullInput()
 	ptCursorPositionDelta = { (ptCursorPosition.m_iX - ptLastKnowPosition.m_iX), (ptCursorPosition.m_iY - ptLastKnowPosition.m_iY) };
 
 	ptLastKnowPosition = ptCursorPosition;
+
+	// Mouse wheel
+	static int iOldAnalogValue = 0;
+	int iCurrAnalogWheelValue = I::InputSystem->GetAnalogValue(MOUSE_WHEEL);
+
+	int iDelta = iCurrAnalogWheelValue - iOldAnalogValue;
+
+	bMousewheeldown = (iDelta == -1);
+	bMousewheelup = (iDelta == 1);
+
+	iOldAnalogValue = iCurrAnalogWheelValue;
 }
 
 bool IPT::IsKeyHeld(unsigned uKeyCode)
@@ -74,4 +86,14 @@ bool IPT::IsCursorInArea(FGUI::AREA arArea)
 		return false;
 	return (GetCursorPosition().m_iX > arArea.m_iLeft && GetCursorPosition().m_iY > arArea.m_iTop &&
 		GetCursorPosition().m_iX < arArea.m_iLeft + arArea.m_iRight && GetCursorPosition().m_iY < arArea.m_iTop + arArea.m_iBottom);
+}
+
+bool IPT::GetMouseScrollWheel(bool down)
+{
+	if (bMousewheeldown && down)
+		return true;
+	else if (bMousewheelup && !down)
+		return true;
+	else
+		return false;
 }

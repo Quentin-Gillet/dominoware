@@ -12,6 +12,7 @@ namespace FGUI
 	{
 		m_strTitle = "CheckBox";
 		m_dmSize = { 14, 14 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_anyFont = 0;
 		m_strTooltip = "";
 		m_bIsChecked = false;

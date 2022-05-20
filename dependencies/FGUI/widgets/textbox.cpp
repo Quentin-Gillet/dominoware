@@ -13,6 +13,7 @@ namespace FGUI
 	{
 		m_strTitle = "TextBox";
 		m_dmSize = { 150, 20 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_bIsGettingKey = false;
 		m_strCustomText = "";
 		m_uiLength = 24;

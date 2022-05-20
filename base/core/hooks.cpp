@@ -323,14 +323,6 @@ void FASTCALL H::hkPaintTraverse(ISurface* thisptr, int edx, unsigned int uPanel
 	if (uPanelHash == FNV1A::HashConst("MatSystemTopPanel"))
 	{
 		W::Render();
-		if(I::InputSystem->IsButtonDown(S::EButtonCode::MOUSE_WHEEL_DOWN))
-			L::Print("MOUSE WHEEL");
-		if (IPT::IsKeyHeld(S::EButtonCode::MOUSE_WHEEL_DOWN))
-			L::Print("WHEEL");
-		if (IPT::IsKeyPressed(S::EButtonCode::MOUSE_WHEEL_DOWN))
-			L::Print("WHEEL 2");
-		if (IPT::IsKeyReleased(S::EButtonCode::MOUSE_WHEEL_DOWN))
-			L::Print("WHEEL 3");
 	}
 
 	// @note: we don't render here, only store's data and render it later

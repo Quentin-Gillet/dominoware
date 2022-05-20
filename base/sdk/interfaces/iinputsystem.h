@@ -146,10 +146,20 @@ enum EMouseCodeState : int
 	BUTTON_DOUBLECLICKED,
 };
 
-enum EAnalogCode : int {
-	MOUSE_WHEEL_UP = 112,		// A fake button which is 'pressed' and 'released' when the wheel is moved up 
-	MOUSE_WHEEL_DOWN			// A fake button which is 'pressed' and 'released' when the wheel is moved down
+//-----------------------------------------------------------------------------
+// Enumeration for analog input devices. Includes joysticks, mousewheel, mouse
+//-----------------------------------------------------------------------------
+enum EAnalogCode
+{
+	ANALOG_CODE_INVALID = -1,
+	MOUSE_X = 0,
+	MOUSE_Y,
+	MOUSE_XY,		// Invoked when either x or y changes
+	MOUSE_WHEEL,
+
+	ANALOG_CODE_LAST,
 };
+
 
 #pragma endregion
 

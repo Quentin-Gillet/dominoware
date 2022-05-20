@@ -15,6 +15,7 @@ namespace FGUI
 		m_strTitle = "ComboBox";
 		m_anyFont = 0;
 		m_dmSize = { 150, 20 };
+		m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		m_iCustomHeight = { m_dmSize.m_iHeight };
 		m_iEntrySpacing = 20;
 		m_ullSelectedEntry = 0;
@@ -259,6 +260,17 @@ namespace FGUI
 				{
 					m_bIsDraggingThumb = false;
 				}
+			}
+
+			if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+			{
+				if (FGUI::INPUT.GetMouseScrollWheel(true))
+				{
+					m_iScrollThumbPosition += 2 * 5;
+					L::Print("SCROLLING");
+				}
+				else if (FGUI::INPUT.GetMouseScrollWheel(false))
+					m_iScrollThumbPosition -= 2 * 5;
 			}
 
 			// keep dropdown opened if the user is scrolling

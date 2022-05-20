@@ -17,60 +17,60 @@
 namespace FGUI
 {
 
-  class CListBox : public FGUI::CWidgets
-  {
-  public:
-    CListBox();
+	class CListBox : public FGUI::CWidgets
+	{
+	public:
+		CListBox();
 
-    // @brief: set the listbox selected index
-    // @args: std::size_t index = selected index (starting with 0)
-    void SetIndex(std::size_t index);
+		// @brief: set the listbox selected index
+		// @args: std::size_t index = selected index (starting with 0)
+		void SetIndex(std::size_t index);
 
-    // @brief: get the listbox selected index (entry)
-    std::size_t GetIndex();
+		// @brief: get the listbox selected index (entry)
+		std::size_t GetIndex();
 
-    // @brief: get the listbox selected entry custom value
-    int GetValue();
+		// @brief: get the listbox selected entry custom value
+		int GetValue();
 
-    std::string GetKey();
-  	
-    // @brief: adds a new entry inside the listbox
-    // @args: std::string name = entry title, unsigned int value = entry custom value
-    void AddEntry(std::string name, unsigned int value = 0);
+		std::string GetKey();
 
-    // @brief: adds a function callback for the listbox (it will call the function whenever the user selects something on the listbox)
-    // @args: std::function<void()> callback = function instance
-    void AddCallback(std::function<void()> callback);
+		// @brief: adds a new entry inside the listbox
+		// @args: std::string name = entry title, unsigned int value = entry custom value
+		void AddEntry(std::string name, unsigned int value = 0);
 
-    // @brief: populate widget geometry (draw widget)
-    // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
-    void Geometry(FGUI::WIDGET_STATUS status) override;
+		// @brief: adds a function callback for the listbox (it will call the function whenever the user selects something on the listbox)
+		// @args: std::function<void()> callback = function instance
+		void AddCallback(std::function<void()> callback);
 
-    // @brief: handle update operations on the widget
-    void Update() override;
+		// @brief: populate widget geometry (draw widget)
+		// @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
+		void Geometry(FGUI::WIDGET_STATUS status) override;
 
-    // @brief: handle input inside the widget
-    void Input() override;
+		// @brief: handle update operations on the widget
+		void Update() override;
 
-    // @brief: save the widget state
-    // @args: nlohmann::json module = json module
-    void Save(nlohmann::json& module) override;
+		// @brief: handle input inside the widget
+		void Input() override;
 
-    // @brief: load the widget state
-    // @args: nlohmann::json module = json module
-    void Load(nlohmann::json& module) override;
+		// @brief: save the widget state
+		// @args: nlohmann::json module = json module
+		void Save(nlohmann::json& module) override;
 
-    // @brief: handle widget tooltips
-    void Tooltip() override;
+		// @brief: load the widget state
+		// @args: nlohmann::json module = json module
+		void Load(nlohmann::json& module) override;
 
-  private:
-    std::size_t m_ullSelectedEntry;
-    int m_iEntrySpacing;
-    bool m_bIsDraggingThumb;
-    int m_iScrollThumbPosition;
-    std::pair<std::vector<std::string>, std::vector<int>> m_prgpEntries;
-    std::function<void()> m_fnctCallback;
-  };
+		// @brief: handle widget tooltips
+		void Tooltip() override;
+
+	private:
+		std::size_t m_ullSelectedEntry;
+		int m_iEntrySpacing;
+		bool m_bIsDraggingThumb;
+		int m_iScrollThumbPosition;
+		std::pair<std::vector<std::string>, std::vector<int>> m_prgpEntries;
+		std::function<void()> m_fnctCallback;
+	};
 
 } // namespace FGUI
 

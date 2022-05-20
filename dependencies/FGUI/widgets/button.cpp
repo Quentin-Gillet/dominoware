@@ -12,6 +12,7 @@ namespace FGUI
   {
     m_strTitle = "Button";
     m_dmSize = {100, 25};
+    m_dmSizeDefault = { m_dmSize.m_iWidth, m_dmSize.m_iHeight };
     m_strTooltip = "";
     m_anyFont = 0;
     m_fnctCallback = nullptr;
