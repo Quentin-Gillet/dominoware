@@ -292,10 +292,10 @@ namespace FGUI
 					static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 10)));
 
 				// scrollbar body
-				FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, { 235, 235, 235 });
+				FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, { 50, 50, 50 });
 
 				// scrollbar thumb
-				FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 4), (arScrollBarRegion.m_iTop + flScrollbarThumbPosition) + 5, dmScrollBarThumbWidth.m_iWidth, flScrollbarThumbSize, { 220, 223, 231 });
+				FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 4), (arScrollBarRegion.m_iTop + flScrollbarThumbPosition) + 5, dmScrollBarThumbWidth.m_iWidth, flScrollbarThumbSize, { 60, 60, 60 });
 			}
 		}
 
@@ -407,7 +407,7 @@ namespace FGUI
 	{
 		// reset cursor
 		SetCursor(CURSOR_STYLE::ARROW);
-
+		static std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 		// check if the container is behaving like a window
 		if (!GetParentWidget())
 		{
@@ -455,12 +455,13 @@ namespace FGUI
 		}
 		else // if the container is behaving like a groupbox
 		{
-			if (m_bScrollBarState)
+			if (m_bScrollBarState && !cWindow->m_bIsFocusingOnWidget)
 			{
 				static bool bIsDraggingThumb = false;
 
 				FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 				FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, arWidgetRegion.m_iBottom };
+				static constexpr int iLinesToScroll = 2; // NOTE: feel free to change this
 
 				if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
 				{
@@ -476,8 +477,6 @@ namespace FGUI
 				if (bIsDraggingThumb)
 				{
 					FGUI::POINT ptCursorPosDelta = FGUI::INPUT.GetCursorPosDelta();
-
-					static constexpr int iLinesToScroll = 2; // NOTE: feel free to change this
 
 					if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
 					{
@@ -495,6 +494,17 @@ namespace FGUI
 					}
 				}
 
+				if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+				{
+					if (FGUI::INPUT.IsKeyReleased(MOUSE_WHEEL_DOWN))
+					{
+						m_iWidgetScrollOffset += iLinesToScroll;
+						L::Print("SROLL DOWN");
+					}
+					else if (FGUI::INPUT.IsKeyPressed(MOUSE_WHEEL_UP))
+						m_iWidgetScrollOffset -= iLinesToScroll;
+				}
+
 				// clamp scrolling
 				m_iWidgetScrollOffset = std::clamp(m_iWidgetScrollOffset, 0, std::max(0, ((m_prgpWidgets.back()->GetPosition().m_iY + (m_prgpWidgets.back()->GetSize().m_iHeight + 15))) - m_dmSize.m_iHeight));
 			}
@@ -505,7 +515,6 @@ namespace FGUI
 
 		// this will hold the current skipped widget
 		std::shared_ptr<FGUI::CWidgets> pWidgetToSkip = nullptr;
-		std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 
 		// handle skipped widgets first
 		if (cWindow->m_bIsFocusingOnWidget)
@@ -591,7 +600,7 @@ namespace FGUI
 					}
 				}
 
-				FGUI::AREA arWidgetRegion;
+				FGUI::AREA arWidgetRegion = {};
 
 				if (m_bScrollBarState)
 				{

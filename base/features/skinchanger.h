@@ -150,6 +150,8 @@ public:
 	// get skins corresponding to a weapon
 	std::vector<KitItem> GetSkinsForAWeapon(EItemDefinitionIndex weaponId);
 
+	std::map<EItemDefinitionIndex, int> weaponSkins;
+
 	std::vector<CPaintKit> pPaintKits;
 	std::vector<PaintKitItem> pGlovePaintKits;
 	std::vector<PaintKitItem> pWeaponPaintKits;

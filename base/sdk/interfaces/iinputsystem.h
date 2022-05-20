@@ -135,7 +135,7 @@ namespace S
 		MOUSE_WHEEL_DOWN,	// A fake button which is 'pressed' and 'released' when the wheel is moved down
 
 		MOUSE_LAST = MOUSE_WHEEL_DOWN,
-		MOUSE_COUNT = MOUSE_LAST - MOUSE_FIRST + 1,
+		MOUSE_COUNT = MOUSE_LAST - MOUSE_FIRST + 1
 	};
 
 }
@@ -145,6 +145,12 @@ enum EMouseCodeState : int
 	BUTTON_PRESSED,
 	BUTTON_DOUBLECLICKED,
 };
+
+enum EAnalogCode : int {
+	MOUSE_WHEEL_UP = 112,		// A fake button which is 'pressed' and 'released' when the wheel is moved up 
+	MOUSE_WHEEL_DOWN			// A fake button which is 'pressed' and 'released' when the wheel is moved down
+};
+
 #pragma endregion
 
 // @credits: https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/public/inputsystem/iinputsystem.h
@@ -179,5 +185,10 @@ public:
 	void GetCursorPosition(int* pX, int* pY)
 	{
 		MEM::CallVFunc<void>(this, 56, pX, pY);
+	}
+
+	int GetAnalogValue(EAnalogCode code)
+	{
+		return MEM::CallVFunc<int>(this, 18, code);
 	}
 };

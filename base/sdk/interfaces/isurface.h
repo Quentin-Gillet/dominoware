@@ -63,7 +63,6 @@ public:
 		MEM::CallVFunc<void>(this, 14, colDraw);
 	}
 
-
 	void DrawSetColor(int r, int g, int b, int a)
 	{
 		MEM::CallVFunc<void>(this, 15, r, g, b, a);

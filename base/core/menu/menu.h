@@ -29,6 +29,11 @@ namespace W
 		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest;
 		inline std::shared_ptr<FGUI::CColorPicker> cColorPicker;
 		inline std::shared_ptr<FGUI::CSlider> cSlider;
+		inline std::shared_ptr<FGUI::CSlider> cSlider1;
+		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest1;
+		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest2;
+		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest3;
+		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest4;
 
 		inline std::shared_ptr<FGUI::CTextBox> cTextBox;
 		inline std::shared_ptr<FGUI::CComboBox> cComboBox;
@@ -48,4 +53,6 @@ namespace W
 
 	void UpdateAccentColor();
 	void UpdateSkinList();
+	void AddSkinForAWeapon();
+
 }

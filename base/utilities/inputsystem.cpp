@@ -68,6 +68,10 @@ FGUI::POINT IPT::GetCursorPositionDelta()
 
 bool IPT::IsCursorInArea(FGUI::AREA arArea)
 {
+	if (&arArea == nullptr)
+		return false;
+	if (arArea.m_iBottom == 0 && arArea.m_iLeft == 0 && arArea.m_iRight == 0 && arArea.m_iTop == 0)
+		return false;
 	return (GetCursorPosition().m_iX > arArea.m_iLeft && GetCursorPosition().m_iY > arArea.m_iTop &&
 		GetCursorPosition().m_iX < arArea.m_iLeft + arArea.m_iRight && GetCursorPosition().m_iY < arArea.m_iTop + arArea.m_iBottom);
 }
