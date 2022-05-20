@@ -76,7 +76,7 @@ namespace FGUI
 		{
 			m_prgpEntries.first.clear();
 			m_prgpEntries.second.clear();
-			AddEntry("--------------");
+			AddEntry("Default");
 		}
 	private:
 		bool m_bIsOpened;

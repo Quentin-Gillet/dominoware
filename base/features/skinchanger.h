@@ -99,40 +99,22 @@ const std::pair<std::size_t, std::string> arrItemQuality[] =
 	{ 12, "Tournament" }
 };
 
-struct KitWeapon {
+struct KitWeapon 
+{
 	KitWeapon(int paintKit, EItemDefinitionIndex weaponId, const char* iconPath) noexcept : iPaintKit{ paintKit }, weaponId{ weaponId }, iconPath{ iconPath } {}
 	int iPaintKit;
 	EItemDefinitionIndex weaponId;
 	const char* iconPath;
 };
 
-struct CPaintKit {
-	CPaintKit(int id, std::string name, float wearRemapMin, float wearRemapMax) noexcept
-		: id{ id }, wearRemapMin{ wearRemapMin }, wearRemapMax{ wearRemapMax }, name{ name } {}
-
-	int id;
-	float wearRemapMin = 0.0f;
-	float wearRemapMax = 1.0f;
-	std::string name;
-};
-
-struct PaintKitItem
+struct CPaintKitItem
 {
-	PaintKitItem(EItemDefinitionIndex weaponID, std::size_t dataIndex, std::string_view iconPath) noexcept
-		: weaponID{ weaponID }, dataIndex{ dataIndex }, iconPath{ iconPath } {}
-	EItemDefinitionIndex weaponID;
-	std::size_t dataIndex;
-	std::string_view iconPath;
-};
-
-struct KitItem
-{
-	KitItem(std::string_view iconPath, EItemDefinitionIndex weaponID, int id, std::string name) noexcept
-		: iconPath{ iconPath }, weaponID{ weaponID }, id{ id }, name{ name }{}
-	std::string_view iconPath;
-	EItemDefinitionIndex weaponID;
-	int id;
+	CPaintKitItem(int iPaintKit, std::string name, EItemDefinitionIndex weaponID, std::string_view iconPath) noexcept
+		: weaponID{ weaponID }, iPaintKit{ iPaintKit }, iconPath{ iconPath }, name{ name } {}
+	int iPaintKit;
 	std::string name;
+	EItemDefinitionIndex weaponID;
+	std::string_view iconPath;
 };
 
 // @todo: add valve vdf/vpk parser and get skins, rarity things, etc with it
@@ -148,13 +130,12 @@ public:
 	// init itemSystem
 	void Init();
 	// get skins corresponding to a weapon
-	std::vector<KitItem> GetSkinsForAWeapon(EItemDefinitionIndex weaponId);
+	std::vector<CPaintKitItem> GetSkinsForAWeapon(EItemDefinitionIndex weaponId);
 
 	std::map<EItemDefinitionIndex, int> weaponSkins;
 
-	std::vector<CPaintKit> pPaintKits;
-	std::vector<PaintKitItem> pGlovePaintKits;
-	std::vector<PaintKitItem> pWeaponPaintKits;
+	std::vector<CPaintKitItem> pGlovePaintKits;
+	std::vector<CPaintKitItem> pWeaponPaintKits;
 private:
 	std::vector<KitWeapon> GetKitsWeapons(const UtlMap<std::uint64_t, AlternateIconData>& alternateIcons) noexcept;
 };

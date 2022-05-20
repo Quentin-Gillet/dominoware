@@ -59,7 +59,6 @@ void CSkinChanger::Dump(ItemSchema* pItemSchema, ToUtf8Converter<>& pConverter)
 			continue;
 
 		const auto paintKitName = pConverter.ConvertUnicodeToAnsi(I::Localize->FindSafe(paintKit->itemName.Data()));
-		pPaintKits.emplace_back(CPaintKit(paintKit->id, paintKitName, paintKit->wearRemapMin, paintKit->wearRemapMax ));
 
 		const auto isGlove = (paintKit->id >= 10000);
 		for (auto it = std::ranges::lower_bound(kitsWeapons, paintKit->id, {}, &KitWeapon::iPaintKit); it != kitsWeapons.end() && it->iPaintKit == paintKit->id; ++it) {
@@ -68,25 +67,24 @@ void CSkinChanger::Dump(ItemSchema* pItemSchema, ToUtf8Converter<>& pConverter)
 				continue;
 
 			if (isGlove) {
-				pGlovePaintKits.emplace_back(PaintKitItem(it->weaponId, pPaintKits.size() -1, it->iconPath));
+				pGlovePaintKits.emplace_back(CPaintKitItem(paintKit->id, paintKitName, it->weaponId, it->iconPath));
 			}
 			else {
-				pWeaponPaintKits.emplace_back(PaintKitItem(it->weaponId, pPaintKits.size() - 1, it->iconPath));
+				pWeaponPaintKits.emplace_back(CPaintKitItem(paintKit->id, paintKitName,it->weaponId, it->iconPath));
 			}
 		}
 	}
 }
 
-std::vector<KitItem> CSkinChanger::GetSkinsForAWeapon(EItemDefinitionIndex weaponId)
+std::vector<CPaintKitItem> CSkinChanger::GetSkinsForAWeapon(EItemDefinitionIndex weaponId)
 {
-	std::vector<KitItem> items;
+	std::vector<CPaintKitItem> items;
 
 	for (const auto& item : pWeaponPaintKits)
 	{
-		if (item.weaponID == weaponId) 
+		if (item.weaponID == weaponId)
 		{
-			auto skin = pPaintKits[item.dataIndex];
-			items.emplace_back(KitItem(item.iconPath, item.weaponID, skin.id, skin.name));
+			items.emplace_back(item);
 		}
 	}
 	return items;

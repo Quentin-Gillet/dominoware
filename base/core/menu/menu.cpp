@@ -106,7 +106,7 @@ void W::UpdateSkinList()
 	Widgets::cSkinSelection->ClearEntries();
 	for (const auto& skin : CSkinChanger::Get().GetSkinsForAWeapon(static_cast<EItemDefinitionIndex>(Widgets::cWeaponSelection->GetValue())))
 	{
-		Widgets::cSkinSelection->AddEntry(skin.name, skin.id);
+		Widgets::cSkinSelection->AddEntry(skin.name, skin.iPaintKit);
 	}
 }
 
