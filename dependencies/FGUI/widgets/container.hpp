@@ -108,6 +108,7 @@ namespace FGUI
 		std::vector<std::shared_ptr<FGUI::CWidgets>> m_prgpWidgets;
 		std::function<void()> m_fnctCallback;
 		FGUI::COLOR m_accentColor;
+		bool bIsDraggingThumb;
 	};
 
 } // namespace FGUI

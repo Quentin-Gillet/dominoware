@@ -29,7 +29,7 @@ void D::Setup()
 	FGUI::RENDER.Rounded = D::R::AddRoundedRect;
 	FGUI::RENDER.Text = D::R::AddText;
 
-	L::Print("[RENDER] Render initialized.");
+	L::Print(XorStr("[RENDER] Render initialized."));
 }
 
 void F::CreateSurfaceFont(FGUI::FONT& hFont, std::string szFontName, int iSize, int iFlags, bool bBold)

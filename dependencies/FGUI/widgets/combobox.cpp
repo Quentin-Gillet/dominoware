@@ -129,7 +129,7 @@ namespace FGUI
 					iEntriesDisplayed++;
 				}
 
-				static constexpr FGUI::DIMENSION dmScrollBarThumb = { 8, 5 };
+				static constexpr FGUI::DIMENSION dmScrollBarThumb = { 8, 6 };
 
 				// calculate thumb position
 				float flCalculatedPosition = static_cast<float>(m_iScrollThumbPosition) / static_cast<float>(m_prgpEntries.first.size());
@@ -249,12 +249,6 @@ namespace FGUI
 					// new vertical position ratio
 					float flNewYRatio = static_cast<float>(ptCursorPos.m_iY) / static_cast<float>(m_dmSize.m_iHeight);
 					m_iScrollThumbPosition = (flNewYRatio * m_prgpEntries.first.size());
-
-					// clamp position (don't let the user drag the scroll thumb if it reaches the "start" of the scrollbar area)
-					if (m_iScrollThumbPosition <= 0)
-					{
-						m_iScrollThumbPosition = 0;
-					}
 				}
 				else
 				{
@@ -262,15 +256,24 @@ namespace FGUI
 				}
 			}
 
-			if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+			// @TODO: clamp down value
+			FGUI::AREA arWidgetFullRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+			if (FGUI::INPUT.IsCursorInArea(arWidgetFullRegion))
 			{
 				if (FGUI::INPUT.GetMouseScrollWheel(true))
-				{
-					m_iScrollThumbPosition += 2 * 5;
-					L::Print("SCROLLING");
-				}
+					m_iScrollThumbPosition += 1;
 				else if (FGUI::INPUT.GetMouseScrollWheel(false))
-					m_iScrollThumbPosition -= 2 * 5;
+					m_iScrollThumbPosition -= 1;
+			}
+
+			// clamp position (don't let the user drag the scroll thumb if it reaches the "start" of the scrollbar area)
+			if (m_iScrollThumbPosition <= 0)
+			{
+				m_iScrollThumbPosition = 0;
+			}
+			if (m_iScrollThumbPosition >= m_prgpEntries.first.size() - 10)
+			{
+				m_iScrollThumbPosition = m_prgpEntries.first.size() - 10;
 			}
 
 			// keep dropdown opened if the user is scrolling

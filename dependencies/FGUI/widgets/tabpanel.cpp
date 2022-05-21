@@ -82,12 +82,12 @@ namespace FGUI
 				if (m_ullSelectedEntry == i)
 				{
 					FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - 5), arWidgetRegion.m_iRight, 2, accentColor);
-					FGUI::RENDER.Text((arWidgetRegion.m_iLeft + dimTextSize.m_iWidth / 2 + 13), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
+					FGUI::RENDER.Text((arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight / 2) - (dimTextSize.m_iWidth / 2)), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
 				}
 				else
 				{
 					//FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
-					FGUI::RENDER.Text((arWidgetRegion.m_iLeft + dimTextSize.m_iWidth / 2 + 13), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
+					FGUI::RENDER.Text((arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight / 2) - (dimTextSize.m_iWidth / 2)), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
 					if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
 						FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - 5), arWidgetRegion.m_iRight, 2, { accentColor.m_ucRed, accentColor.m_ucGreen, accentColor.m_ucBlue, 80.f });
 				}

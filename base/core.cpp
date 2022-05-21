@@ -85,7 +85,7 @@ DWORD WINAPI OnDllAttach(LPVOID lpParameter)
 		D::Setup();
 
 		W::Initialize();
-		L::Print("[MENU] Menu initialized.");
+		L::Print(XorStr("[MENU] Menu initialized."));
 #if 0
 		// start tracking entities
 		U::EntityListener.Setup();

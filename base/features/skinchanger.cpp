@@ -31,7 +31,7 @@ void CSkinChanger::Init()
 	const auto pItemSchema = GetItemSystem()->GetItemSchema();
 	ToUtf8Converter pConverter{ *I::Localize };
 	Dump(pItemSchema, pConverter);
-	L::Print("[SKINS] All skins dumped");
+	L::Print(XorStr("[SKINS] All skins dumped"));
 }
 
 std::vector<KitWeapon> CSkinChanger::GetKitsWeapons(const UtlMap<std::uint64_t, AlternateIconData>& alternateIcons) noexcept

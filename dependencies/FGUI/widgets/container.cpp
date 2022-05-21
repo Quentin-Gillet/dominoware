@@ -24,6 +24,7 @@ namespace FGUI
 		m_pFocusedWidget = nullptr;
 		m_nType = static_cast<int>(WIDGET_TYPE::CONTAINER);
 		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::DRAW_FIRST);
+		bIsDraggingThumb = false;
 	}
 
 	void CContainer::Render()
@@ -412,7 +413,7 @@ namespace FGUI
 
 			static bool bIsDraggingContainer = false;
 
-			if (FGUI::INPUT.IsCursorInArea(arDraggableArea))
+			if (FGUI::INPUT.IsCursorInArea(arDraggableArea) && !bIsDraggingThumb)
 			{
 				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
 				{
@@ -446,10 +447,9 @@ namespace FGUI
 		{
 			if (m_bScrollBarState && !cWindow->m_bIsFocusingOnWidget)
 			{
-				static bool bIsDraggingThumb = false;
-
 				FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 				FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, arWidgetRegion.m_iBottom };
+				std::shared_ptr<FGUI::CContainer> cWindow = std::reinterpret_pointer_cast<FGUI::CContainer>(GetWindowContainer());
 				static constexpr int iLinesToScroll = 2; // NOTE: feel free to change this
 
 				if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
@@ -457,6 +457,7 @@ namespace FGUI
 					if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
 					{
 						bIsDraggingThumb = true;
+						cWindow->bIsDraggingThumb = true;
 					}
 				}
 
@@ -471,12 +472,14 @@ namespace FGUI
 					else
 					{
 						bIsDraggingThumb = false;
+						cWindow->bIsDraggingThumb = false;
 					}
 
 					// disable scrolling if a widget is being focused
 					if (GetFocusedWidget())
 					{
 						bIsDraggingThumb = false;
+						cWindow->bIsDraggingThumb = false;
 					}
 				}
 

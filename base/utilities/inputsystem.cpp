@@ -20,7 +20,7 @@ void IPT::Setup()
 
 	FGUI::INPUT.SetInputType(FGUI::INPUT_TYPE::INPUT_SYSTEM);
 
-	L::Print("[INPUT] Input initialized.");
+	L::Print(XorStr("[INPUT] Input initialized."));
 }
 
 void IPT::PullInput()
