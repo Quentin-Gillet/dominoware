@@ -14,6 +14,8 @@
 // used: skins list
 #include "../../features/skinchanger.h"
 
+#include "../../utilities.h"
+
 /*
  * WINDOWS
  */
@@ -33,7 +35,6 @@ namespace W
 		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest1;
 		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest2;
 		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest3;
-		inline std::shared_ptr<FGUI::CCheckBox> cCheckTest4;
 
 		inline std::shared_ptr<FGUI::CTextBox> cTextBox;
 		inline std::shared_ptr<FGUI::CComboBox> cComboBox;
@@ -42,8 +43,12 @@ namespace W
 		inline std::shared_ptr<FGUI::CItemSelector> cItemSelector;
 
 		inline std::shared_ptr<FGUI::CContainer> cGroupboxSkins;
+		inline std::shared_ptr<FGUI::CCheckBox> cActiveSkinchanger;
+		inline std::shared_ptr<FGUI::CComboBox> cKnifeModel;
 		inline std::shared_ptr<FGUI::CComboBox> cWeaponSelection;
 		inline std::shared_ptr<FGUI::CComboBox> cSkinSelection;
+		inline std::shared_ptr<FGUI::CButton> cFullUpdate;
+
 	};
 
 	void Initialize();

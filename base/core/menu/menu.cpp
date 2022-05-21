@@ -6,7 +6,7 @@ void W::Initialize()
 	Widgets::cMainMenu = std::make_shared<FGUI::CContainer>();
 	Widgets::cMainMenu->SetAccentColor({ 14 , 180, 191 });
 
-	cBuilder.Widget(Widgets::cMainMenu).Title("Dominoware.xyz").Position(400, 400).Size(650, 400).Font(F::WhitneyMenu).Key(S::KEY_RCONTROL).Flag(FGUI::WIDGET_FLAG::LIMIT);
+	cBuilder.Widget(Widgets::cMainMenu).Title("Dominoware.xyz").Position(400, 400).Size(650, 400).Font(F::WhitneyMenu).Key(S::KEY_INSERT).Flag(FGUI::WIDGET_FLAG::LIMIT);
 	{
 		Widgets::cMainTabPanel = std::make_shared<FGUI::CTabPanel>();
 		Widgets::cMainTabPanel->SetStyle(FGUI::ESTabLayout_t::HORIZONTAL);
@@ -41,9 +41,6 @@ void W::Initialize()
 				Widgets::cCheckTest3 = std::make_shared<FGUI::CCheckBox>();
 				cBuilder.Widget(Widgets::cCheckTest3).Title("Test Check 3").Position(10, 230).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
-				Widgets::cCheckTest4 = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest4).Title("Test Check 4").Position(10, 270).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupbox);
-
 				Widgets::cSlider1 = std::make_shared<FGUI::CSlider>();
 				cBuilder.Widget(Widgets::cSlider1).Title("Slider wesh 1").Position(10, 310).Font(F::WhitneyMenu).Prefix("ms").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
 			}
@@ -60,11 +57,20 @@ void W::Initialize()
 			Widgets::cGroupboxSkins = std::make_shared<FGUI::CContainer>();
 			cBuilder.Widget(Widgets::cGroupboxSkins).Title("Skin Changer").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 2).SpawnIn(Widgets::cMainMenu, false);
 			{
+				Widgets::cActiveSkinchanger = std::make_shared<FGUI::CCheckBox>();
+				cBuilder.Widget(Widgets::cActiveSkinchanger).Title("Enable").Position(10, 20).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxSkins);
+
+				Widgets::cKnifeModel = std::make_shared<FGUI::CComboBox>();
+				cBuilder.Widget(Widgets::cKnifeModel).Title("Knife model").Position(10, 60).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxSkins);
+
 				Widgets::cWeaponSelection = std::make_shared<FGUI::CComboBox>();
-				cBuilder.Widget(Widgets::cWeaponSelection).Title("Weapons").Position(10, 30).Font(F::WhitneyMenu).Callback(UpdateSkinList).SpawnIn(Widgets::cGroupboxSkins);
+				cBuilder.Widget(Widgets::cWeaponSelection).Title("Weapons").Position(10, 100).Font(F::WhitneyMenu).Callback(UpdateSkinList).SpawnIn(Widgets::cGroupboxSkins);
 
 				Widgets::cSkinSelection = std::make_shared<FGUI::CComboBox>();
-				cBuilder.Widget(Widgets::cSkinSelection).Title("Skins").Position(10, 80).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxSkins).Entry("default").Callback(AddSkinForAWeapon);
+				cBuilder.Widget(Widgets::cSkinSelection).Title("Skins").Position(10, 140).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxSkins).Entry("Default").Callback(AddSkinForAWeapon);
+
+				Widgets::cFullUpdate = std::make_shared<FGUI::CButton>();
+				cBuilder.Widget(Widgets::cFullUpdate).Title("UPDATE").Position(10, 180).Font(F::WhitneyMenu).Callback(U::ForceFullUpdate).SpawnIn(Widgets::cGroupboxSkins);
 			}
 
 		}
@@ -94,9 +100,16 @@ void W::UpdateAccentColor()
 
 void W::InitWeaponList()
 {
-	for (const auto& skin : mapItemList)
+	for (const auto& skin : mapItemListWeapon)
 	{
 		Widgets::cWeaponSelection->AddEntry(skin.second.szName, skin.first);
+	}
+
+	Widgets::cKnifeModel->AddEntry("default", 0);
+	for (const auto& skin : mapItemListKnife)
+	{
+		Widgets::cWeaponSelection->AddEntry(skin.second.szName, skin.first);
+		Widgets::cKnifeModel->AddEntry(skin.second.szName, skin.first);
 	}
 }
 

@@ -391,6 +391,8 @@ void FASTCALL H::hkFrameStageNotify(IBaseClientDll* thisptr, int edx, EClientFra
 		 * e.g. resolver or skinchanger and other visuals
 		 */
 
+		CSkinChanger::Get().Run();
+
 		break;
 	}
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
@@ -774,6 +776,11 @@ bool P::Setup()
 	RVP::SmokeEffectTickBegin = std::make_shared<CRecvPropHook>(pSmokeEffectTickBegin, P::SmokeEffectTickBegin);
 #endif
 
+	RecvProp_t* pSequence = CNetvarManager::Get().mapProps[FNV1A::HashConst(XorStr("CBaseViewModel->m_nSequence"))].pRecvProp;
+	if (!pSequence) return false;
+
+	RVP::Sequence = std::make_shared<CRecvPropHook>(pSequence, P::Sequence);
+
 	return true;
 }
 
@@ -784,6 +791,8 @@ void P::Restore()
 // restore smoke effect
 	RVP::SmokeEffectTickBegin->Restore();
 #endif
+
+	RVP::Sequence->Restore();
 }
 #pragma endregion
 
@@ -799,5 +808,35 @@ void P::SmokeEffectTickBegin(const CRecvProxyData* pData, void* pStruct, void* p
 	}*/
 
 	oSmokeEffectTickBegin(pData, pStruct, pOut);
+}
+
+void P::Sequence(const CRecvProxyData* pData, void* pStruct, void* pOut)
+{
+	static auto oSequence = RVP::Sequence->GetOriginal();
+
+	if (!G::pLocal || !G::pLocal->IsAlive())
+	{
+		oSequence(pData, pStruct, pOut);
+		return;
+	}
+
+	CRecvProxyData* pProxyData = const_cast<CRecvProxyData*>(pData);
+	CBaseViewModel* pViewModel = static_cast<CBaseViewModel*>(pStruct);
+
+	if (pViewModel && pViewModel->GetOwnerHandle())
+	{
+		if (G::pLocal->GetWeapon() && W::Widgets::cActiveSkinchanger->GetState() && W::Widgets::cKnifeModel->GetValue() != 0)
+		{
+			auto pKnifeModel = I::ModelInfo->GetModel(pViewModel->GetModelIndex());
+			auto szKnifeName = I::ModelInfo->GetModelName(pKnifeModel);
+
+			if (CSkinChanger::Get().AnimationFixMap.count(szKnifeName))
+			{
+				pProxyData->Value.Int = CSkinChanger::Get().AnimationFixMap.at(szKnifeName)(pProxyData->Value.Int);
+			}
+		}
+	}
+
+	oSequence(pProxyData, pStruct, pOut);
 }
 #pragma endregion

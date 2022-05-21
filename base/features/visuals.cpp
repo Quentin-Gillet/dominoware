@@ -747,7 +747,7 @@ void CVisuals::HitMarker(const Vector2D& vecScreenSize, float flServerTime, Colo
 
 	//for (const auto& arrSide : arrSides)
 	//	// draw mark cross
-	//	D::AddLine(Vector2D(vecScreenSize.x * 0.5f + C::Get<int>(Vars.iScreenHitMarkerGap) * arrSide[0], vecScreenSize.y * 0.5f + C::Get<int>(Vars.iScreenHitMarkerGap) * arrSide[1]), Vector2D(vecScreenSize.x * 0.5f + C::Get<int>(Vars.iScreenHitMarkerLenght) * arrSide[0], vecScreenSize.y * 0.5f + C::Get<int>(Vars.iScreenHitMarkerLenght) * arrSide[1]), colLines.Set<COLOR_A>(static_cast<std::uint8_t>(std::min(flMaxLinesAlpha, flLastDelta / C::Get<float>(Vars.flScreenHitMarkerTime)) * 255.f)));
+	//	D::AddLine(Vector2D(vecScreenSize.x * 0.5f + C::Get<int>(Vars.iScreenHitMarkerGap) * arrSide[0], vecScreenSize.y * 0.5f + C::Get<int>(Vars.iScreenHitMarkerGap) * arrSide[1]), Vector2D(vecScreenSize.x * 0.5f + C::Get<int>(Vars.iScreenHitMarkerLength) * arrSide[0], vecScreenSize.y * 0.5f + C::Get<int>(Vars.iScreenHitMarkerLength) * arrSide[1]), colLines.Set<COLOR_A>(static_cast<std::uint8_t>(std::min(flMaxLinesAlpha, flLastDelta / C::Get<float>(Vars.flScreenHitMarkerTime)) * 255.f)));
 
 	//if (!C::Get<bool>(Vars.bScreenHitMarkerDamage))
 	//	return;

@@ -799,6 +799,7 @@ public:
 	N_ADD_VARIABLE(int, GetAmmoReserve, "CBaseCombatWeapon->m_iPrimaryReserveAmmoCount");
 	N_ADD_VARIABLE(int, GetViewModelIndex, "CBaseCombatWeapon->m_iViewModelIndex");
 	N_ADD_VARIABLE(int, GetWorldModelIndex, "CBaseCombatWeapon->m_iWorldModelIndex");
+	//N_ADD_VARIABLE(int, GetModelIndex, "CBaseCombatWeapon->m_nModelIndex");
 	N_ADD_VARIABLE(CBaseHandle, GetWorldModelHandle, "CBaseCombatWeapon->m_hWeaponWorldModel");
 
 	N_ADD_DATAFIELD(bool, IsReloading, this->GetPredictionDescMap(), "m_bInReload");
@@ -819,6 +820,11 @@ public:
 	N_ADD_VARIABLE(int, GetFallbackStatTrak, "CBaseAttributableItem->m_nFallbackStatTrak");
 	N_ADD_PVARIABLE(CEconItemView, GetEconItemView, "CBaseAttributableItem->m_Item");
 	#pragma endregion
+
+	EItemDefinitionIndex GetItemDefinitionIndexEnum()
+	{
+		return static_cast<EItemDefinitionIndex>(GetItemDefinitionIndex());
+	}
 
 	void SetModelIndex(int nModelIndex)
 	{

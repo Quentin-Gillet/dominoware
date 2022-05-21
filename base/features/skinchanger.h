@@ -12,8 +12,10 @@
 #include "../sdk/datatypes/itemschema.h"
 // used: loggin
 #include "../utilities/logging.h"
-//used: localize
+// used: localize
 #include "../core/interfaces.h"
+// used: menu vars
+#include "../core/menu/menu.h"
 
 struct SkinObject_t
 {
@@ -26,7 +28,7 @@ struct SkinObject_t
 };
 
 // @note: u can find viewmodel indexes with "sv_precacheinfo"
-const std::unordered_map<int, SkinObject_t> mapItemList =
+const std::unordered_map<int, SkinObject_t> mapItemListWeapon =
 {
 	{ WEAPON_DEAGLE, { "Desert Eagle", "models/weapons/v_pist_deagle.mdl", "deagle" } },
 	{ WEAPON_ELITE, { "Dual Berettas", "models/weapons/v_pist_elite.mdl", "elite" } },
@@ -58,12 +60,14 @@ const std::unordered_map<int, SkinObject_t> mapItemList =
 	{ WEAPON_SCAR20, { "SCAR-20", "models/weapons/v_snip_scar20.mdl", "scar20" } },
 	{ WEAPON_SG556, { "SG 553", "models/weapons/v_rif_sg556.mdl", "sg556" } },
 	{ WEAPON_SSG08, { "SSG 08", "models/weapons/v_snip_ssg08.mdl", "ssg08" } },
-	{ WEAPON_KNIFE, { "Knife (Counter-Terrorists)", "models/weapons/v_knife_default_ct.mdl", "knife_default_ct" } },
-	{ WEAPON_KNIFE_T, { "Knife (Terrorists)", "models/weapons/v_knife_default_t.mdl", "knife_t" } },
 	{ WEAPON_M4A1_SILENCER, { "M4A1-S", "models/weapons/v_rif_m4a1_s.mdl", "m4a1_silencer" } },
 	{ WEAPON_USP_SILENCER, { "USP-S", "models/weapons/v_pist_223.mdl", "usp_silencer" } },
 	{ WEAPON_CZ75A, { "CZ75 Auto", "models/weapons/v_pist_cz_75.mdl", "cz75a" } },
 	{ WEAPON_REVOLVER, { "R8 Revolver", "models/weapons/v_pist_revolver.mdl", "revolver" } },
+};
+
+const std::unordered_map<int, SkinObject_t> mapItemListKnife =
+{
 	{ WEAPON_KNIFE_BAYONET, { "Bayonet", "models/weapons/v_knife_bayonet.mdl", "bayonet" } },
 	{ WEAPON_KNIFE_FLIP, { "Flip Knife", "models/weapons/v_knife_flip.mdl", "knife_flip" } },
 	{ WEAPON_KNIFE_GUT, { "Gut Knife", "models/weapons/v_knife_gut.mdl", "knife_gut" } },
@@ -136,6 +140,192 @@ public:
 
 	std::vector<CPaintKitItem> pGlovePaintKits;
 	std::vector<CPaintKitItem> pWeaponPaintKits;
+
+	// Animation fix for knifes
+	enum sequence
+	{
+		SEQUENCE_DEFAULT_DRAW = 0,
+		SEQUENCE_DEFAULT_IDLE1 = 1,
+		SEQUENCE_DEFAULT_IDLE2 = 2,
+		SEQUENCE_DEFAULT_LIGHT_MISS1 = 3,
+		SEQUENCE_DEFAULT_LIGHT_MISS2 = 4,
+		SEQUENCE_DEFAULT_HEAVY_MISS1 = 9,
+		SEQUENCE_DEFAULT_HEAVY_HIT1 = 10,
+		SEQUENCE_DEFAULT_HEAVY_BACKSTAB = 11,
+		SEQUENCE_DEFAULT_LOOKAT01 = 12,
+
+		SEQUENCE_BUTTERFLY_DRAW = 0,
+		SEQUENCE_BUTTERFLY_DRAW2 = 1,
+		SEQUENCE_BUTTERFLY_LOOKAT01 = 13,
+		SEQUENCE_BUTTERFLY_LOOKAT03 = 15,
+
+		SEQUENCE_FALCHION_IDLE1 = 1,
+		SEQUENCE_FALCHION_HEAVY_MISS1 = 8,
+		SEQUENCE_FALCHION_HEAVY_MISS1_NOFLIP = 9,
+		SEQUENCE_FALCHION_LOOKAT01 = 12,
+		SEQUENCE_FALCHION_LOOKAT02 = 13,
+
+		SEQUENCE_DAGGERS_IDLE1 = 1,
+		SEQUENCE_DAGGERS_LIGHT_MISS1 = 2,
+		SEQUENCE_DAGGERS_LIGHT_MISS5 = 6,
+		SEQUENCE_DAGGERS_HEAVY_MISS2 = 11,
+		SEQUENCE_DAGGERS_HEAVY_MISS1 = 12,
+
+		SEQUENCE_BOWIE_IDLE1 = 1,
+	};
+
+	static int RandomSequence(int low, int high)
+	{
+		return rand() % (high - low + 1) + low;
+	}
+
+	const std::unordered_map<std::string, int(*)(int)> AnimationFixMap
+	{
+		{ "models/weapons/v_knife_butterfly.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_DRAW:
+				return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, SEQUENCE_BUTTERFLY_LOOKAT03);
+			default:
+				return sequence + 1;
+			}
+		} },
+		{ "models/weapons/v_knife_falchion_advanced.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_IDLE2:
+				return SEQUENCE_FALCHION_IDLE1;
+			case SEQUENCE_DEFAULT_HEAVY_MISS1:
+				return RandomSequence(SEQUENCE_FALCHION_HEAVY_MISS1, SEQUENCE_FALCHION_HEAVY_MISS1_NOFLIP);
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(SEQUENCE_FALCHION_LOOKAT01, SEQUENCE_FALCHION_LOOKAT02);
+			case SEQUENCE_DEFAULT_DRAW:
+			case SEQUENCE_DEFAULT_IDLE1:
+				return sequence;
+			default:
+				return sequence - 1;
+			}
+		} },
+		{ "models/weapons/v_knife_push.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_IDLE2:
+				return SEQUENCE_DAGGERS_IDLE1;
+			case SEQUENCE_DEFAULT_LIGHT_MISS1:
+			case SEQUENCE_DEFAULT_LIGHT_MISS2:
+				return RandomSequence(SEQUENCE_DAGGERS_LIGHT_MISS1, SEQUENCE_DAGGERS_LIGHT_MISS5);
+			case SEQUENCE_DEFAULT_HEAVY_MISS1:
+				return RandomSequence(SEQUENCE_DAGGERS_HEAVY_MISS2, SEQUENCE_DAGGERS_HEAVY_MISS1);
+			case SEQUENCE_DEFAULT_HEAVY_HIT1:
+			case SEQUENCE_DEFAULT_HEAVY_BACKSTAB:
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return sequence + 3;
+			case SEQUENCE_DEFAULT_DRAW:
+			case SEQUENCE_DEFAULT_IDLE1:
+				return sequence;
+			default:
+				return sequence + 2;
+			}
+		} },
+		{ "models/weapons/v_knife_survival_bowie.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_DRAW:
+			case SEQUENCE_DEFAULT_IDLE1:
+				return sequence;
+			case SEQUENCE_DEFAULT_IDLE2:
+				return SEQUENCE_BOWIE_IDLE1;
+			default:
+				return sequence - 1;
+			}
+		} },
+		{ "models/weapons/v_knife_ursus.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_DRAW:
+				return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, 14);
+			default:
+				return sequence + 1;
+			}
+		} },
+		{ "models/weapons/v_knife_stiletto.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(12, 13);
+			}
+		} },
+		{ "models/weapons/v_knife_widowmaker.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(14, 15);
+			}
+		} },
+		{ "models/weapons/v_knife_cord.mdl", [](int sequence) -> int
+		{
+			switch (sequence)
+			{
+			case SEQUENCE_DEFAULT_DRAW:
+				return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+			case SEQUENCE_DEFAULT_LOOKAT01:
+				return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, 14);
+			default:
+				return sequence + 1;
+			}
+		} },
+		{ "models/weapons/v_knife_canis.mdl", [](int sequence) -> int
+		{
+		switch (sequence)
+		{
+		case SEQUENCE_DEFAULT_DRAW:
+			return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+		case SEQUENCE_DEFAULT_LOOKAT01:
+			return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, 14);
+		default:
+			return sequence + 1;
+		}
+		} },
+		{ "models/weapons/v_knife_outdoor.mdl", [](int sequence) -> int
+		{
+		switch (sequence)
+		{
+		case SEQUENCE_DEFAULT_DRAW:
+			return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+		case SEQUENCE_DEFAULT_LOOKAT01:
+			return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, 14);
+		default:
+			return sequence + 1;
+		}
+		} },
+		{ "models/weapons/v_knife_skeleton.mdl", [](int sequence) -> int
+		{
+		switch (sequence)
+		{
+		case SEQUENCE_DEFAULT_DRAW:
+			return RandomSequence(SEQUENCE_BUTTERFLY_DRAW, SEQUENCE_BUTTERFLY_DRAW2);
+		case SEQUENCE_DEFAULT_LOOKAT01:
+			return RandomSequence(SEQUENCE_BUTTERFLY_LOOKAT01, 14);
+		default:
+			return sequence + 1;
+		}
+		} }
+			// end
+	};
 private:
+	void ApplyKnifeModel(CBaseCombatWeapon* pWeapon, const char* cModel, int iItemDefinitionIndex, int iPaintKit, int iModelIndex, float flWear, CBaseEntity* pLocal);
+	void ApplySkin(CBaseCombatWeapon* pWeapon, int iItemDefinitionIndex, int iPaintKit, float flWear);
+
 	std::vector<KitWeapon> GetKitsWeapons(const UtlMap<std::uint64_t, AlternateIconData>& alternateIcons) noexcept;
 };

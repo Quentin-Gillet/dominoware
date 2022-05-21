@@ -161,6 +161,7 @@ namespace H
 namespace RVP
 {
 	inline std::shared_ptr<CRecvPropHook> SmokeEffectTickBegin;
+	inline std::shared_ptr<CRecvPropHook> Sequence;
 }
 
 /*
@@ -175,4 +176,5 @@ namespace P
 
 	// Handlers
 	void	SmokeEffectTickBegin(const CRecvProxyData* pData, void* pStruct, void* pOut);
+	void	Sequence(const CRecvProxyData* pData, void* pStruct, void* pOut);
 }
