@@ -41,6 +41,11 @@ namespace FGUI
 		return m_prgpEntries.second[m_ullSelectedEntry];
 	}
 
+	std::string CListBox::GetSelectedName()
+	{
+		return m_prgpEntries.first[m_ullSelectedEntry];
+	}
+
 	void CListBox::AddEntry(std::string name, unsigned int value)
 	{
 		m_prgpEntries.first.emplace_back(name);

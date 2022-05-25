@@ -11,22 +11,22 @@ void W::Initialize()
 		Widgets::cMainTabPanel = std::make_shared<FGUI::CTabPanel>();
 		Widgets::cMainTabPanel->SetStyle(FGUI::ESTabLayout_t::HORIZONTAL);
 
-		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Skins", "Misc", "Config" }).SpawnIn(Widgets::cMainMenu, false);
+		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Skins", "Misc", "Config" }).SpawnIn(Widgets::cMainMenu, false).ScrollBar(true);
 		{
 			Widgets::cGroupbox = std::make_shared<FGUI::CContainer>();
-			cBuilder.Widget(Widgets::cGroupbox).Title("Test").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 0).SpawnIn(Widgets::cMainMenu, false).ScrollBar(true);
+			cBuilder.Widget(Widgets::cGroupbox).Title("Test").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 0).SpawnIn(Widgets::cMainMenu, false);
 			{
 				Widgets::cCheckTest = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Position(10, 20).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cColorPicker = std::make_shared<FGUI::CColorPicker>();
 				cBuilder.Widget(Widgets::cColorPicker).Title("Accent Color").Position(200, 12).Color(Widgets::cMainMenu->GetAccentColor()).Callback(UpdateAccentColor).SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cSlider = std::make_shared<FGUI::CSlider>();
-				cBuilder.Widget(Widgets::cSlider).Title("Slider wesh").Position(10, 60).Font(F::WhitneyMenu).Prefix("%").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cSlider).Title("Slider wesh").Font(F::WhitneyMenu).Prefix("%").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cComboBox = std::make_shared<FGUI::CComboBox>();
-				cBuilder.Widget(Widgets::cComboBox).Title("Test combo").Position(10, 90).Font(F::WhitneyMenu)
+				cBuilder.Widget(Widgets::cComboBox).Title("Test combo").Font(F::WhitneyMenu)
 					.Entries({ "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3", "Case 1", "Case 2", "Case 3" }).SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cTextBox = std::make_shared<FGUI::CTextBox>();
@@ -73,9 +73,25 @@ void W::Initialize()
 				cBuilder.Widget(Widgets::cFullUpdate).Title("UPDATE").Position(10, 180).Font(F::WhitneyMenu).Callback(U::ForceFullUpdate).SpawnIn(Widgets::cGroupboxSkins);
 			}
 
+			Widgets::cGroupboxConfig = std::make_shared<FGUI::CContainer>();
+			cBuilder.Widget(Widgets::cGroupboxConfig).Title("Config").Position(10, 10).Size(240, 280).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 4).SpawnIn(Widgets::cMainMenu, false);
+			{
+				Widgets::cConfigList = std::make_shared<FGUI::CListBox>();
+				cBuilder.Widget(Widgets::cConfigList).Title("Configs").Position(10, 30).Font(F::WhitneyMenu).Size(250, 100).SpawnIn(Widgets::cGroupboxConfig);
+
+				Widgets::cConfigName = std::make_shared<FGUI::CTextBox>();
+				cBuilder.Widget(Widgets::cConfigName).Title("Config name").Position(10, 160).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxConfig);
+
+				Widgets::cSaveButton = std::make_shared<FGUI::CButton>();
+				cBuilder.Widget(Widgets::cSaveButton).Title("Save").Position(10, 200).Font(F::WhitneyMenu).Callback(W::Save).SpawnIn(Widgets::cGroupboxConfig);
+
+				Widgets::cLoadButton = std::make_shared<FGUI::CButton>();
+				cBuilder.Widget(Widgets::cLoadButton).Title("Load").Position(10, 240).Font(F::WhitneyMenu).Callback(W::Load).SpawnIn(Widgets::cGroupboxConfig);
+			}
 		}
 	}
 
+	RefreshConfigList();
 	InitWeaponList();
 }
 
@@ -119,6 +135,44 @@ void W::UpdateSkinList()
 	for (const auto& skin : CSkinChanger::Get().GetSkinsForAWeapon(static_cast<EItemDefinitionIndex>(Widgets::cWeaponSelection->GetValue())))
 	{
 		Widgets::cSkinSelection->AddEntry(skin.name, skin.iPaintKit);
+	}
+}
+
+void W::Save()
+{
+	Widgets::cMainMenu->SaveToFile("dominoware\\" + Widgets::cConfigList->GetSelectedName() + ".dw");
+	RefreshConfigList();
+}
+
+void W::Load()
+{
+	Widgets::cMainMenu->LoadFromFile("dominoware\\" + Widgets::cConfigList->GetSelectedName() + ".dw");
+}
+
+std::vector<std::string> split(const std::string& str, const std::string& delim)
+{
+	std::vector<std::string> tokens;
+	size_t prev = 0, pos = 0;
+	do
+	{
+		pos = str.find(delim, prev);
+		if (pos == std::string::npos) pos = str.length();
+		std::string token = str.substr(prev, pos - prev);
+		if (!token.empty()) tokens.push_back(token);
+		prev = pos + delim.length();
+	} while (pos < str.length() && prev < str.length());
+	return tokens;
+}
+
+void W::RefreshConfigList()
+{
+	Widgets::cConfigList->ClearEntries();
+	for (const auto& pFile : std::filesystem::directory_iterator("dominoware\\"))
+	{
+		auto file_path = pFile.path().string();
+		auto file_name = split(file_path, "\\")[1];
+		auto display_file_name = split(file_name, ".")[0];
+		Widgets::cConfigList->AddEntry(display_file_name);
 	}
 }
 

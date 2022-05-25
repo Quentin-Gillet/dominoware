@@ -212,6 +212,8 @@ namespace FGUI
 			m_clrDefault.m_ucBlue = module[strFormatedWidgetName]["blue"];
 			m_clrDefault.m_ucAlpha = module[strFormatedWidgetName]["alpha"];
 		}
+
+		m_fnctCallback();
 	}
 
 	void CColorPicker::Tooltip()

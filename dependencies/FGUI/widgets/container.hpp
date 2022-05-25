@@ -11,7 +11,6 @@
 
 // library includes
 #include "widgets.hpp"
-
 namespace FGUI
 {
 
@@ -109,6 +108,7 @@ namespace FGUI
 		std::function<void()> m_fnctCallback;
 		FGUI::COLOR m_accentColor;
 		bool bIsDraggingThumb;
+		int m_iLastYPosition;
 	};
 
 } // namespace FGUI

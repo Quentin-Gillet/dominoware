@@ -59,6 +59,9 @@ namespace FGUI
 	{
 		m_dmSize.m_iWidth = width;
 		m_dmSize.m_iHeight = height;
+
+		m_dmSizeDefault.m_iWidth = width;
+		m_dmSizeDefault.m_iHeight = height;
 	}
 
 	void CWidgets::SetSize(FGUI::DIMENSION size)

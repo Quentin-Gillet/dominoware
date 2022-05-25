@@ -4,8 +4,8 @@
 
 // library includes
 #include "container.hpp"
-
 #include "../../../base/utilities/logging.h"
+#include "../../../base/core/interfaces.h"
 
 namespace FGUI
 {
@@ -25,6 +25,7 @@ namespace FGUI
 		m_nType = static_cast<int>(WIDGET_TYPE::CONTAINER);
 		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::DRAW_FIRST);
 		bIsDraggingThumb = false;
+		m_iLastYPosition = 20;
 	}
 
 	void CContainer::Render()
@@ -81,11 +82,15 @@ namespace FGUI
 
 		if (ofsFileToSave.fail())
 		{
+			L::PushConsoleColor(FOREGROUND_RED);
+			L::Print("[Config] cannot save config {}", file.c_str());
+			L::PopConsoleColor();
 			return; // TODO: handle this properly
 		}
 
 		// write the file
 		ofsFileToSave << std::setw(4) << jsModule << std::endl;
+		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config saved.");
 	}
 
 	void CContainer::LoadFromFile(std::string file)
@@ -101,6 +106,9 @@ namespace FGUI
 
 		if (ifsFileToLoad.fail())
 		{
+			L::PushConsoleColor(FOREGROUND_RED);
+			L::Print("[Config] cannot load config {}", file.c_str());
+			L::PopConsoleColor();
 			return; // TODO: handle this properly
 		}
 
@@ -110,6 +118,7 @@ namespace FGUI
 		{
 			pWidgets->Load(jsModule);
 		}
+		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config loaded.");
 	}
 
 	void CContainer::SetState(bool state)
@@ -190,6 +199,7 @@ namespace FGUI
 		if (padding)
 		{
 			static constexpr int iScrollBarWidth = 15;
+			static constexpr int iWidgetSpace = 10;
 
 			if (GetParentWidget())
 			{
@@ -200,6 +210,16 @@ namespace FGUI
 				else
 				{
 					widget->SetSize(m_dmSize.m_iWidth - (widget->GetPosition().m_iX * 2), widget->GetSize().m_iHeight);
+				}
+
+				if (widget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER) || widget->GetType() == static_cast<int>(WIDGET_TYPE::KEYBINDER))
+				{
+					// TODO
+				}
+				else
+				{
+					widget->SetPosition(10, m_iLastYPosition);
+					m_iLastYPosition += iWidgetSpace + widget->GetSize().m_iHeight;
 				}
 			}
 			else

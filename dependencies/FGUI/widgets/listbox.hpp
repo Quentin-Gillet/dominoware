@@ -32,7 +32,8 @@ namespace FGUI
 		// @brief: get the listbox selected entry custom value
 		int GetValue();
 
-		std::string GetKey();
+		// @brief: get the name of selected entry
+		std::string GetSelectedName();
 
 		// @brief: adds a new entry inside the listbox
 		// @args: std::string name = entry title, unsigned int value = entry custom value
@@ -63,6 +64,12 @@ namespace FGUI
 		// @brief: handle widget tooltips
 		void Tooltip() override;
 
+		void ClearEntries()
+		{
+			m_prgpEntries.first.clear();
+			m_prgpEntries.second.clear();
+			m_ullSelectedEntry = 0;
+		}
 	private:
 		std::size_t m_ullSelectedEntry;
 		int m_iEntrySpacing;

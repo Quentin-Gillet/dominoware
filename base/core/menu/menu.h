@@ -16,6 +16,8 @@
 
 #include "../../utilities.h"
 
+#include <filesystem>
+
 /*
  * WINDOWS
  */
@@ -49,6 +51,12 @@ namespace W
 		inline std::shared_ptr<FGUI::CComboBox> cSkinSelection;
 		inline std::shared_ptr<FGUI::CButton> cFullUpdate;
 
+		inline std::shared_ptr<FGUI::CContainer> cGroupboxConfig;
+		inline std::shared_ptr<FGUI::CListBox> cConfigList;
+		inline std::shared_ptr<FGUI::CTextBox> cConfigName;
+		inline std::shared_ptr<FGUI::CButton> cSaveButton;
+		inline std::shared_ptr<FGUI::CButton> cLoadButton;
+
 	};
 
 	void Initialize();
@@ -60,4 +68,7 @@ namespace W
 	void UpdateSkinList();
 	void AddSkinForAWeapon();
 
+	void Save();
+	void Load();
+	void RefreshConfigList();
 }
