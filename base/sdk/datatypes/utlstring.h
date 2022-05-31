@@ -1,6 +1,4 @@
-#pragma once
-
-#include "utlmap.h";
+#include "utlmap.h"
 
 struct CUtlString
 {

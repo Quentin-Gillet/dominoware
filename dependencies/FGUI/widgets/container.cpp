@@ -25,7 +25,7 @@ namespace FGUI
 		m_nType = static_cast<int>(WIDGET_TYPE::CONTAINER);
 		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::DRAW_FIRST);
 		bIsDraggingThumb = false;
-		m_iLastYPosition = 20;
+		m_iLastYPosition = 15;
 	}
 
 	void CContainer::Render()
@@ -203,6 +203,24 @@ namespace FGUI
 
 			if (GetParentWidget())
 			{
+				if (widget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER) || widget->GetType() == static_cast<int>(WIDGET_TYPE::KEYBINDER))
+				{
+					if(m_bScrollBarState)
+						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 20, m_iLastYPosition);
+					else
+						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 10, m_iLastYPosition);
+				}
+				else if(widget->GetType() == static_cast<int>(WIDGET_TYPE::CHECKBOX) || widget->GetType() == static_cast<int>(WIDGET_TYPE::BUTTON))
+				{
+					widget->SetPosition(10, m_iLastYPosition);
+					m_iLastYPosition += iWidgetSpace + widget->GetSize().m_iHeight;
+				}
+				else
+				{
+					widget->SetPosition(10, m_iLastYPosition + 10);
+					m_iLastYPosition += iWidgetSpace + widget->GetSize().m_iHeight + 10;
+				}
+
 				if (m_bScrollBarState)
 				{
 					widget->SetSize(m_dmSize.m_iWidth - (widget->GetPosition().m_iX * 2) - iScrollBarWidth, widget->GetSize().m_iHeight);
@@ -210,16 +228,6 @@ namespace FGUI
 				else
 				{
 					widget->SetSize(m_dmSize.m_iWidth - (widget->GetPosition().m_iX * 2), widget->GetSize().m_iHeight);
-				}
-
-				if (widget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER) || widget->GetType() == static_cast<int>(WIDGET_TYPE::KEYBINDER))
-				{
-					// TODO
-				}
-				else
-				{
-					widget->SetPosition(10, m_iLastYPosition);
-					m_iLastYPosition += iWidgetSpace + widget->GetSize().m_iHeight;
 				}
 			}
 			else

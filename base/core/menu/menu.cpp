@@ -6,21 +6,21 @@ void W::Initialize()
 	Widgets::cMainMenu = std::make_shared<FGUI::CContainer>();
 	Widgets::cMainMenu->SetAccentColor({ 14 , 180, 191 });
 
-	cBuilder.Widget(Widgets::cMainMenu).Title("Dominoware.xyz").Position(400, 400).Size(650, 400).Font(F::WhitneyMenu).Key(S::KEY_INSERT).Flag(FGUI::WIDGET_FLAG::LIMIT);
+	cBuilder.Widget(Widgets::cMainMenu).Title("Dominoware.xyz").Position(400, 400).Size(650, 400).Font(F::WhitneyMenu).Key(S::KEY_RCONTROL).Flag(FGUI::WIDGET_FLAG::LIMIT);
 	{
 		Widgets::cMainTabPanel = std::make_shared<FGUI::CTabPanel>();
 		Widgets::cMainTabPanel->SetStyle(FGUI::ESTabLayout_t::HORIZONTAL);
 
-		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Skins", "Misc", "Config" }).SpawnIn(Widgets::cMainMenu, false).ScrollBar(true);
+		cBuilder.Widget(Widgets::cMainTabPanel).Position(10, 300).Font(F::WhitneyMenu).Tabs({ "LegitBot", "Visuals", "Skins", "Misc", "Config" }).SpawnIn(Widgets::cMainMenu, false);
 		{
 			Widgets::cGroupbox = std::make_shared<FGUI::CContainer>();
-			cBuilder.Widget(Widgets::cGroupbox).Title("Test").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 0).SpawnIn(Widgets::cMainMenu, false);
+			cBuilder.Widget(Widgets::cGroupbox).Title("Test").Position(10, 20).Size(240, 240).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 0).ScrollBar(true).SpawnIn(Widgets::cMainMenu, false);
 			{
-				Widgets::cCheckTest = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
-
 				Widgets::cColorPicker = std::make_shared<FGUI::CColorPicker>();
 				cBuilder.Widget(Widgets::cColorPicker).Title("Accent Color").Position(200, 12).Color(Widgets::cMainMenu->GetAccentColor()).Callback(UpdateAccentColor).SpawnIn(Widgets::cGroupbox);
+
+				Widgets::cCheckTest = std::make_shared<FGUI::CCheckBox>();
+				cBuilder.Widget(Widgets::cCheckTest).Title("Test Check").Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cSlider = std::make_shared<FGUI::CSlider>();
 				cBuilder.Widget(Widgets::cSlider).Title("Slider wesh").Font(F::WhitneyMenu).Prefix("%").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
@@ -36,13 +36,13 @@ void W::Initialize()
 				cBuilder.Widget(Widgets::cCheckTest1).Title("Test Check 1").Position(10, 160).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cCheckTest2 = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest2).Title("Test Check 2").Position(10, 190).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cCheckTest2).Title("Test Check 2").Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cCheckTest3 = std::make_shared<FGUI::CCheckBox>();
-				cBuilder.Widget(Widgets::cCheckTest3).Title("Test Check 3").Position(10, 230).Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cCheckTest3).Title("Test Check 3").Font(F::WhitneyMenu).Tooltip("test tooltip").SpawnIn(Widgets::cGroupbox);
 
 				Widgets::cSlider1 = std::make_shared<FGUI::CSlider>();
-				cBuilder.Widget(Widgets::cSlider1).Title("Slider wesh 1").Position(10, 310).Font(F::WhitneyMenu).Prefix("ms").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
+				cBuilder.Widget(Widgets::cSlider1).Title("Slider wesh 1").Font(F::WhitneyMenu).Prefix("ms").Range(0, 100).Value(0).SpawnIn(Widgets::cGroupbox);
 			}
 
 			Widgets::cGroupboxVisual = std::make_shared<FGUI::CContainer>();
@@ -51,7 +51,7 @@ void W::Initialize()
 				Widgets::cItemSelector = std::make_shared<FGUI::CItemSelector>();
 				cBuilder.Widget(Widgets::cItemSelector).Title("Item test").Position(10, 20).Font(F::WhitneyMenu)
 					.Entries({"test 1", "test 2", "iteem 3", "item 5"})
-					.SpawnIn(Widgets::cGroupboxVisual, true);
+					.SpawnIn(Widgets::cGroupboxVisual);
 			}
 
 			Widgets::cGroupboxSkins = std::make_shared<FGUI::CContainer>();
@@ -74,19 +74,25 @@ void W::Initialize()
 			}
 
 			Widgets::cGroupboxConfig = std::make_shared<FGUI::CContainer>();
-			cBuilder.Widget(Widgets::cGroupboxConfig).Title("Config").Position(10, 10).Size(240, 280).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 4).SpawnIn(Widgets::cMainMenu, false);
+			cBuilder.Widget(Widgets::cGroupboxConfig).Title("Config").Position(10, 10).Size(240, 280).Font(F::WhitneyMenu).Medium(Widgets::cMainTabPanel, 4).ScrollBar(true).SpawnIn(Widgets::cMainMenu, false);
 			{
 				Widgets::cConfigList = std::make_shared<FGUI::CListBox>();
-				cBuilder.Widget(Widgets::cConfigList).Title("Configs").Position(10, 30).Font(F::WhitneyMenu).Size(250, 100).SpawnIn(Widgets::cGroupboxConfig);
+				cBuilder.Widget(Widgets::cConfigList).Title("Configs").Font(F::WhitneyMenu).Size(250, 100).SpawnIn(Widgets::cGroupboxConfig);
 
 				Widgets::cConfigName = std::make_shared<FGUI::CTextBox>();
-				cBuilder.Widget(Widgets::cConfigName).Title("Config name").Position(10, 160).Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxConfig);
+				cBuilder.Widget(Widgets::cConfigName).Title("Config name").Font(F::WhitneyMenu).SpawnIn(Widgets::cGroupboxConfig);
 
 				Widgets::cSaveButton = std::make_shared<FGUI::CButton>();
-				cBuilder.Widget(Widgets::cSaveButton).Title("Save").Position(10, 200).Font(F::WhitneyMenu).Callback(W::Save).SpawnIn(Widgets::cGroupboxConfig);
+				cBuilder.Widget(Widgets::cSaveButton).Title("Save").Font(F::WhitneyMenu).Callback(W::Save).SpawnIn(Widgets::cGroupboxConfig);
 
 				Widgets::cLoadButton = std::make_shared<FGUI::CButton>();
-				cBuilder.Widget(Widgets::cLoadButton).Title("Load").Position(10, 240).Font(F::WhitneyMenu).Callback(W::Load).SpawnIn(Widgets::cGroupboxConfig);
+				cBuilder.Widget(Widgets::cLoadButton).Title("Load").Font(F::WhitneyMenu).Callback(W::Load).SpawnIn(Widgets::cGroupboxConfig);
+
+				Widgets::cCreateButton = std::make_shared<FGUI::CButton>();
+				cBuilder.Widget(Widgets::cCreateButton).Title("Create").Font(F::WhitneyMenu).Callback(W::Save).SpawnIn(Widgets::cGroupboxConfig);
+
+				Widgets::cRemoveButton = std::make_shared<FGUI::CButton>();
+				cBuilder.Widget(Widgets::cRemoveButton).Title("Remove").Font(F::WhitneyMenu).Callback(W::Load).SpawnIn(Widgets::cGroupboxConfig);
 			}
 		}
 	}

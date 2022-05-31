@@ -56,6 +56,8 @@ namespace W
 		inline std::shared_ptr<FGUI::CTextBox> cConfigName;
 		inline std::shared_ptr<FGUI::CButton> cSaveButton;
 		inline std::shared_ptr<FGUI::CButton> cLoadButton;
+		inline std::shared_ptr<FGUI::CButton> cCreateButton;
+		inline std::shared_ptr<FGUI::CButton> cRemoveButton;
 
 	};
 

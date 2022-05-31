@@ -213,7 +213,11 @@ namespace FGUI
 			m_clrDefault.m_ucAlpha = module[strFormatedWidgetName]["alpha"];
 		}
 
-		m_fnctCallback();
+		if (m_fnctCallback)
+		{
+			// call function
+			m_fnctCallback();
+		}
 	}
 
 	void CColorPicker::Tooltip()
