@@ -23,7 +23,7 @@ namespace FGUI
 		m_bIsTextSelected = false;
 		m_nStyle = static_cast<int>(TEXTBOX_STYLE::NORMAL);
 		m_nType = static_cast<int>(WIDGET_TYPE::TEXTBOX);
-		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
+		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
 	}
 
 	void CTextBox::SetText(std::string text)

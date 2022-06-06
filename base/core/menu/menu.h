@@ -72,5 +72,7 @@ namespace W
 
 	void Save();
 	void Load();
+	void Create();
+	void Remove();
 	void RefreshConfigList();
 }

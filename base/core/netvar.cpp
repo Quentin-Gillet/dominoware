@@ -16,14 +16,14 @@ bool CNetvarManager::Setup(const std::string_view szDumpFileName)
 	const std::string szTime = std::vformat(XorStr("[{:%d-%m-%Y %X}] "), std::make_format_args(std::chrono::system_clock::now()));
 
 #ifdef _DEBUG
-	std::filesystem::path fsWorkingPath;
-	fsWorkingPath.append("dominoware").append(szDumpFileName);
-	// open our dump file to write in (here is not exception handle because dump is not critical)
-	fsDumpFile.open(fsWorkingPath, std::ios::out | std::ios::trunc);
+	//std::filesystem::path fsWorkingPath;
+	//fsWorkingPath.append("dominoware").append(szDumpFileName);
+	//// open our dump file to write in (here is not exception handle because dump is not critical)
+	//fsDumpFile.open(fsWorkingPath, std::ios::out | std::ios::trunc);
 
-	if (fsDumpFile.good())
-		// write current date, time and info
-		fsDumpFile << szTime << XorStr("dominoware | netvars dump\n\n");
+	//if (fsDumpFile.good())
+	//	// write current date, time and info
+	//	fsDumpFile << szTime << XorStr("dominoware | netvars dump\n\n");
 #endif
 
 	for (auto pClass = I::Client->GetAllClasses(); pClass != nullptr; pClass = pClass->pNext)
@@ -36,7 +36,7 @@ bool CNetvarManager::Setup(const std::string_view szDumpFileName)
 
 #ifdef _DEBUG
 	// close dump file
-	fsDumpFile.close();
+	//fsDumpFile.close();
 #endif
 
 	return !mapProps.empty();

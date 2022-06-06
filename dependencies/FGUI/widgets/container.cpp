@@ -90,7 +90,7 @@ namespace FGUI
 
 		// write the file
 		ofsFileToSave << std::setw(4) << jsModule << std::endl;
-		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config saved.");
+		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config saved.\n");
 	}
 
 	void CContainer::LoadFromFile(std::string file)
@@ -118,7 +118,7 @@ namespace FGUI
 		{
 			pWidgets->Load(jsModule);
 		}
-		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config loaded.");
+		I::ConVar->ConsoleColorPrintf(Color(m_accentColor.m_ucRed, m_accentColor.m_ucGreen, m_accentColor.m_ucBlue), "[dominoware] config loaded.\n");
 	}
 
 	void CContainer::SetState(bool state)
@@ -194,21 +194,22 @@ namespace FGUI
 	{
 		// set the parent widget
 		widget->SetParentWidget(shared_from_this());
+		widget->m_anyFont = GetFont();
 
 		// configure padding
 		if (padding)
 		{
 			static constexpr int iScrollBarWidth = 15;
-			static constexpr int iWidgetSpace = 10;
+			static constexpr int iWidgetSpace = 12;
 
 			if (GetParentWidget())
 			{
 				if (widget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER) || widget->GetType() == static_cast<int>(WIDGET_TYPE::KEYBINDER))
 				{
 					if(m_bScrollBarState)
-						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 20, m_iLastYPosition);
+						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 20, m_iLastYPosition - 3);
 					else
-						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 10, m_iLastYPosition);
+						widget->SetPosition(GetSize().m_iWidth - widget->GetSizeDefault().m_iWidth - 10, m_iLastYPosition - 3);
 				}
 				else if(widget->GetType() == static_cast<int>(WIDGET_TYPE::CHECKBOX) || widget->GetType() == static_cast<int>(WIDGET_TYPE::BUTTON))
 				{

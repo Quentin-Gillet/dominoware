@@ -43,7 +43,10 @@ namespace FGUI
 
 	std::string CListBox::GetSelectedName()
 	{
-		return m_prgpEntries.first[m_ullSelectedEntry];
+		if (m_prgpEntries.first.size() != 0)
+			return m_prgpEntries.first[m_ullSelectedEntry];
+		else
+			return "";
 	}
 
 	void CListBox::AddEntry(std::string name, unsigned int value)
@@ -171,17 +174,30 @@ namespace FGUI
 				// new vertical position ratio
 				float flNewYRatio = static_cast<float>(ptCursorPos.m_iY) / static_cast<float>(m_dmSize.m_iHeight);
 				m_iScrollThumbPosition = (flNewYRatio * m_prgpEntries.first.size());
-
-				// clamp position (don't let the user drag the scroll thumb if it reaches the "start" of the scrollbar area)
-				if (m_iScrollThumbPosition <= 0)
-				{
-					m_iScrollThumbPosition = 0;
-				}
 			}
 			else
 			{
 				m_bIsDraggingThumb = false;
 			}
+		}
+
+		FGUI::AREA arWidgetFullRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+		if (FGUI::INPUT.IsCursorInArea(arWidgetFullRegion))
+		{
+			if (FGUI::INPUT.GetMouseScrollWheel(true))
+				m_iScrollThumbPosition += 1;
+			else if (FGUI::INPUT.GetMouseScrollWheel(false))
+				m_iScrollThumbPosition -= 1;
+		}
+
+		// clamp position (don't let the user drag the scroll thumb if it reaches the "start" of the scrollbar area)
+		if (m_iScrollThumbPosition <= 0)
+		{
+			m_iScrollThumbPosition = 0;
+		}
+		if (m_iScrollThumbPosition >= m_prgpEntries.first.size() - 10)
+		{
+			m_iScrollThumbPosition = m_prgpEntries.first.size() - 10;
 		}
 
 		// stop scrolling if another widget is being focused

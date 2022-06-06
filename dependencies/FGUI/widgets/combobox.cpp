@@ -256,7 +256,6 @@ namespace FGUI
 				}
 			}
 
-			// @TODO: clamp down value
 			FGUI::AREA arWidgetFullRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 			if (FGUI::INPUT.IsCursorInArea(arWidgetFullRegion))
 			{
